@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Technology", menuName = "Scriptable Objects/Technology")]
 public class Technology : ScriptableObject
 {
-    public Dictionary<int, float> stats = new Dictionary<int, float>(); //(0, health), (1,dmg), (2, atkspd), (3, range), (4, castspd), (5, luck)
+    public Dictionary<int, float> stats = new Dictionary<int, float>(); //(0, health), (1,dmg), (2, abilityDamage), (3, atkspd), (4, castspd), (5, abilityCount), (6, luck)
     public Dictionary<int, Ability> abilities = new Dictionary<int, Ability>();
     public Dictionary<int, Passive> passives = new Dictionary<int, Passive>();
 
@@ -26,10 +26,11 @@ public class Technology : ScriptableObject
             {
                 0 => "Health",
                 1 => "Damage",
-                2 => "Attack Speed",
-                3 => "Range",
+                2 => "Ability Damage",
+                3 => "Attack Speed",
                 4 => "Cast Speed",
-                5 => "Luck",
+                5 => "Ability Count",
+                6 => "Luck",
                 _ => "Unknown Stat"
             };
             Debug.Log($"{statName}: {stat.Value}");

@@ -88,7 +88,7 @@ public class TechnologyCreator : MonoBehaviour
         tech.DisplayTechInfo();
     }
 
-    Dictionary<int, float> CalcStats() // ids -> stat   (0, health), (1,dmg), (2, atkspd), (3, range), (4, castspd), (5, luck)
+    Dictionary<int, float> CalcStats() //(0, health), (1,dmg), (2, abilityDamage), (3, atkspd), (4, castspd), (5, abilityCount), (6, luck)
     {
         Dictionary<int, float> stats = new Dictionary<int, float>();
         float tempPercent = RandomBasicPercent();
@@ -103,12 +103,12 @@ public class TechnologyCreator : MonoBehaviour
 
         tempPercent = RandomBasicPercent();
 
-        stats.Add(2, statValue * tempPercent); // attack speed
+        stats.Add(2, statValue * tempPercent); // ability damage
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
 
-        stats.Add(3, statValue * tempPercent); // range
+        stats.Add(3, statValue * tempPercent); // atk speed
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
@@ -118,7 +118,12 @@ public class TechnologyCreator : MonoBehaviour
 
         tempPercent = RandomBasicPercent();
 
-        stats.Add(5, statValue * tempPercent); // luck
+        stats.Add(5, statValue * tempPercent); // ability count
+        statValue -= statValue * tempPercent;
+
+        tempPercent = RandomBasicPercent();
+
+        stats.Add(6, statValue * tempPercent); // luck
         statValue -= statValue * tempPercent;
 
         //print stats
