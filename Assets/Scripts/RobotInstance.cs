@@ -1,0 +1,61 @@
+using System.Collections.Generic;
+
+[System.Serializable]
+public class RobotInstance
+{
+    public RobotData data;
+
+    // Runtime stats
+    public double health;
+    public double atkdamage;
+    public double abilitydamage;
+    public double abilityCount;
+    public double atkspd;
+    public double castspd;
+    public double luck;
+
+    // Runtime abilities/passives/techs (IDs only)
+    public Dictionary<int, AbilityData> abilityDict = new Dictionary<int, AbilityData>();
+    public Dictionary<int, PassiveData> passiveDict = new Dictionary<int, PassiveData>();
+    public List<int> technologyIDs = new List<int>();
+
+    public RobotInstance(RobotData data)
+    {
+        this.data = data;
+
+        // Initialize from base stats
+        health = data.baseHealth;
+        atkdamage = data.baseAtkDamage;
+        abilitydamage = data.baseAbilityDamage;
+        abilityCount = data.baseAbilityCount;
+        atkspd = data.baseAtkSpeed;
+        castspd = data.baseCastSpeed;
+        luck = data.baseLuck;
+
+        // Initialize abilities/passives from base IDs
+        foreach (int id in data.baseAbilityIDs)
+            abilityDict[id] = AbilityDatabase.GetAbility(id);
+
+        foreach (int id in data.basePassiveIDs)
+            passiveDict[id] = PassiveDatabase.GetPassive(id);
+    }
+
+    public void MergeTech(Technology tech)
+    {
+        technologyIDs.Add(tech.id);
+
+        health        += tech.stats[0];
+        atkdamage     += 0.05 * tech.stats[1];
+        abilitydamage += 0.05 * tech.stats[2];
+        atkspd        += 0.01 * tech.stats[3];
+        castspd       += 0.01 * tech.stats[4];
+        abilityCount  += 0.02 * tech.stats[5];
+        luck          += 0.1  * tech.stats[6];
+
+        foreach (int abilityId in tech.abilityIDs)
+            abilityDict[abilityId] = AbilityDatabase.GetAbility(abilityId);
+
+        foreach (int passiveId in tech.passiveIDs)
+            passiveDict[passiveId] = PassiveDatabase.GetPassive(passiveId);
+    }
+}

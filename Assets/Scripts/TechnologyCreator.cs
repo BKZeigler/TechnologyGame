@@ -13,150 +13,129 @@ public class TechnologyCreator : MonoBehaviour
     private int modPCount = 0;
     private int strongACount = 0;
     private int strongPCount = 0;
-    //private int minimumStatPercentage = 0;
-    ///private int maximumStatPercentage = 0;
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public Technology CreateTechnology(double iValue) //Example track ivalue = 100
+    public Technology CreateTechnology(double iValue)
     {
         statValue = 0;
 
-        initialValue = iValue; // initialValue = 100
-        currentValue = iValue; // currentValue = 100
+        initialValue = iValue;
+        currentValue = iValue;
 
-        // Roll that stat share. Random 0-100% subtract percentage of the current value and update stat value.
-        double statPercent = RandomBasicPercent(); // example random roll for stat share
-        statValue = currentValue * statPercent; // stat value share
-        currentValue = currentValue - statValue; // remove the stat value from the current value
+        double statPercent = RandomBasicPercent();
+        statValue = currentValue * statPercent;
+        currentValue -= statValue;
 
-        //Find abilites and passives
-
-        if (currentValue > 10) // Weak abilites
+        if (currentValue > 10)
         {
             int maxCount = (int)Math.Floor(currentValue / 10.0);
-            int tempCount = UnityEngine.Random.Range(0, maxCount); // example random roll for weak abilities
-            weakACount = tempCount;
-            currentValue -= tempCount * 10;
+            weakACount = UnityEngine.Random.Range(0, maxCount);
+            currentValue -= weakACount * 10;
         }
-        if (currentValue > 10) // Weak passives
+        if (currentValue > 10)
         {
             int maxCount = (int)Math.Floor(currentValue / 10.0);
-            int tempCount = UnityEngine.Random.Range(0, maxCount); // example random roll for weak passives
-            weakPCount = tempCount;
-            currentValue -= tempCount * 10;
+            weakPCount = UnityEngine.Random.Range(0, maxCount);
+            currentValue -= weakPCount * 10;
         }
-        if (currentValue > 20) // Moderate abilites
+        if (currentValue > 20)
         {
             int maxCount = (int)Math.Floor(currentValue / 20.0);
-            int tempCount = UnityEngine.Random.Range(0, maxCount); // example random roll for moderate abilities
-            modACount = tempCount;
-            currentValue -= tempCount * 20;
+            modACount = UnityEngine.Random.Range(0, maxCount);
+            currentValue -= modACount * 20;
         }
-        if (currentValue > 20) // Moderate passives
+        if (currentValue > 20)
         {
             int maxCount = (int)Math.Floor(currentValue / 20.0);
-            int tempCount = UnityEngine.Random.Range(0, maxCount); // example random roll for moderate passives
-            modPCount = tempCount;
-            currentValue -= tempCount * 20;
+            modPCount = UnityEngine.Random.Range(0, maxCount);
+            currentValue -= modPCount * 20;
         }
-        if (currentValue > 30) // Strong abilites
+        if (currentValue > 30)
         {
             int maxCount = (int)Math.Floor(currentValue / 30.0);
-            int tempCount = UnityEngine.Random.Range(0, maxCount); // example random roll for strong abilities
-            strongACount = tempCount;
-            currentValue -= tempCount * 30;
+            strongACount = UnityEngine.Random.Range(0, maxCount);
+            currentValue -= strongACount * 30;
         }
-        if (currentValue > 30) // Strong passives
+        if (currentValue > 30)
         {
             int maxCount = (int)Math.Floor(currentValue / 30.0);
-            int tempCount = UnityEngine.Random.Range(0, maxCount); // example random roll for strong passives
-            strongPCount = tempCount;
-            currentValue -= tempCount * 30;
+            strongPCount = UnityEngine.Random.Range(0, maxCount);
+            currentValue -= strongPCount * 30;
         }
-        statValue += currentValue; // add any remaining value to the stat value
 
+        statValue += currentValue;
+
+        // Create the Technology object
         var tech = ScriptableObject.CreateInstance<Technology>();
 
-        tech.Initialize(CalcStats(), createAbilityDictionary(weakACount, modACount, strongACount), createPassiveDictionary(weakPCount, modPCount, strongPCount));
-        //tech.DisplayTechInfo(); only used for testing debugging
+        // Assign a unique name from the run pool
+        tech.techName = RunManager.Instance.GetRandomUnusedName();
+
+        // Assign stats and IDs
+        tech.stats = CalcStatsArray();
+        tech.abilityIDs = CreateAbilityIdList(weakACount, modACount, strongACount);
+        tech.passiveIDs = CreatePassiveIdList(weakPCount, modPCount, strongPCount);
 
         return tech;
     }
 
-    Dictionary<int, double> CalcStats() //(0, health), (1,dmg), (2, abilityDamage), (3, atkspd), (4, castspd), (5, abilityCount), (6, luck)
+    double[] CalcStatsArray()
     {
-        Dictionary<int, double> stats = new Dictionary<int, double>();
-        double tempPercent = RandomBasicPercent();
-
-        stats.Add(0, Math.Round(statValue * tempPercent, 1)); // health
-        statValue -= statValue * tempPercent; // remove the assigned stat value from the total stat value
+        double[] statsArr = new double[7];
+        double tempPercent;
 
         tempPercent = RandomBasicPercent();
-
-        stats.Add(1, Math.Round(statValue * tempPercent, 1)); // damage
+        statsArr[0] = Math.Round(statValue * tempPercent, 1);
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
-
-        stats.Add(2, Math.Round(statValue * tempPercent, 1)); // ability damage
+        statsArr[1] = Math.Round(statValue * tempPercent, 1);
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
-
-        stats.Add(3, Math.Round(statValue * tempPercent, 1)); // atk speed
+        statsArr[2] = Math.Round(statValue * tempPercent, 1);
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
-
-        stats.Add(4, Math.Round(statValue * tempPercent, 1)); // cast speed
+        statsArr[3] = Math.Round(statValue * tempPercent, 1);
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
-
-        stats.Add(5, Math.Round(statValue * tempPercent, 1)); // ability count
+        statsArr[4] = Math.Round(statValue * tempPercent, 1);
         statValue -= statValue * tempPercent;
 
         tempPercent = RandomBasicPercent();
-
-        stats.Add(6, Math.Round(statValue * tempPercent, 1)); // luck
+        statsArr[5] = Math.Round(statValue * tempPercent, 1);
         statValue -= statValue * tempPercent;
 
-        //print stats
-        //foreach (var ele in stats){
-        //    Debug.Log($"Key: {ele.Key}, Value: {ele.Value}");
-        //}
-        return stats;
+        tempPercent = RandomBasicPercent();
+        statsArr[6] = Math.Round(statValue * tempPercent, 1);
+        statValue -= statValue * tempPercent;
+
+        return statsArr;
     }
 
-    Dictionary<int, Ability> createAbilityDictionary(int weakCount, int modCount, int strongCount)
+    List<int> CreateAbilityIdList(int weakCount, int modCount, int strongCount)
     {
-        Dictionary<int, Ability> abilities = new Dictionary<int, Ability>();
+        var ids = new List<int>();
 
-    //pull from pool of abilites based on the counts for weak/mod/strong
+        // TODO: pull from your tiered ability pools
+        // Example:
+        // ids.Add(AbilityPoolWeak.GetRandom().id);
 
-        return abilities;
+        return ids;
     }
 
-    Dictionary<int, Passive> createPassiveDictionary(int weakCount, int modCount, int strongCount)
+    List<int> CreatePassiveIdList(int weakCount, int modCount, int strongCount)
     {
-        Dictionary<int, Passive> passives = new Dictionary<int, Passive>();
+        var ids = new List<int>();
 
-    //pull from pool of passives based on the counts for weak/mod/strong
+        // TODO: pull from your tiered passive pools and then push their IDs
 
-        return passives;
+        return ids;
     }
 
     double RandomBasicPercent()
     {
-    return UnityEngine.Random.Range(0f, 100f) / 100f;
+        return UnityEngine.Random.Range(0f, 100f) / 100f;
     }
 }

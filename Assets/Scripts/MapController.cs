@@ -46,6 +46,9 @@ public class MapController : MonoBehaviour
     {
         player.MoveTo(tile);
         currentTile = tile;
+
+        TriggerTileEvent(tile);
+
         UpdateTraversableTiles();
     }
 
@@ -67,5 +70,15 @@ public class MapController : MonoBehaviour
     {
         if (x >= 0 && x < gridManager.width && y >= 0 && y < gridManager.height)
             gridManager.grid[x, y].SetTraversable(true);
+    }
+
+    void TriggerTileEvent(Tile tile)
+    {
+        if (tile.isCleared)
+            return;
+
+        GameSceneManager.Instance.LoadEventScene(tile.eventType);
+
+        tile.isCleared = true;
     }
 }

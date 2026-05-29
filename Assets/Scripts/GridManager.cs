@@ -23,14 +23,32 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
+                TileEventType eventType = RollEventForTile(x, y);
+
                 var tileObj = Instantiate(tilePrefab, new Vector3(x, y, 0), Quaternion.identity);
                 var tile = tileObj.GetComponent<Tile>();
-                tile.Initialize(x, y, false); // start as not traversable
+                tile.Initialize(x, y, false, eventType);
+
                 grid[x, y] = tile;
             }
         }
+    }
 
-        // Example: make start tile traversable
-        grid[0, 0].SetTraversable(true);
+    TileEventType RollEventForTile(int x, int y)
+    {
+        // Boss tile (top-right)
+        if (x == width - 1 && y == height - 1)
+        {
+            return TileEventType.Boss;
+        }
+
+        // Random event for now
+        int roll = Random.Range(0, 2);
+
+        if (roll == 0) return TileEventType.Battle;
+        if (roll == 1) return TileEventType.TechReward;
+
+        return TileEventType.None;
     }
 }
+

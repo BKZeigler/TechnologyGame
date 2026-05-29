@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TechController : MonoBehaviour
 {
-    public Robot robot;
+    public Robot robot;                 // The MonoBehaviour
     public TechnologyCreator techCreator;
     public TechnologyManager techManager;
 
@@ -23,7 +23,8 @@ public class TechController : MonoBehaviour
             return;
         }
 
-        robot.MergeTech(lastCreatedTech);
+        robot.instance.MergeTech(lastCreatedTech);
+
         techManager.RemoveFirstTech();
         lastCreatedTech = null;
 
