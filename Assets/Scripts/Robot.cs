@@ -21,6 +21,9 @@ public class Robot : MonoBehaviour
 
     public void DisplayStats()
     {
+        Debug.Log(instance == null ? "Instance is NULL" : "Instance OK");
+        Debug.Log(instance.abilityDict == null ? "AbilityDict is NULL" : "AbilityDict OK");
+
         Debug.Log($"Health: {instance.health}");
         Debug.Log($"Attack Damage: {instance.atkdamage}");
         Debug.Log($"Ability Damage: {instance.abilitydamage}");

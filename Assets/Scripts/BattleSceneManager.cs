@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class BattleSceneManager : MonoBehaviour
+public class BattleSceneManager : MonoBehaviour // spawns robots into the scene, instantiates them using RobotFactory
 {
 
     [Header("Spawn Settings")]
@@ -30,8 +30,7 @@ public class BattleSceneManager : MonoBehaviour
             Vector3 spawnPos = new Vector3(xPos, yPosition, 0);
 
             // Instantiate prefab from RobotData
-            GameObject robotObj = Instantiate(robots[i].data.prefab, spawnPos, Quaternion.identity);
-            robotObj.GetComponent<Robot>().Initialize(robots[i]); // Pass the RobotInstance to the Robot MonoBehaviour
+            RobotFactory.SpawnRobot(robots[i], spawnPos);
 
             // Inject the RobotInstance into the Robot MonoBehaviour
             //Robot robotMB = robotObj.GetComponent<Robot>();

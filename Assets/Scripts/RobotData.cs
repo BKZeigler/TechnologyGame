@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Robots/RobotData")]
-public class RobotData : ScriptableObject
-{
-    [Header("Identity")]
-    public string robotName;
-    public GameObject prefab;
+public class RobotData : ScriptableObject // every robot type in your game must have a RobotData ScriptableObject.
+{                                         // Ex: RobotData_Sniper.asset, RobotData_Tank.asset
+    [Header("Identity")]                  // Each contains base stats, base abilites/passives, prefab reference
+    public string robotName;              // Player manager creates RobotInstances like robots.Add(new RobotInstance(robotData_Sniper))
+    public GameObject prefab;             // And then BattleSceneManager spawns them.
 
     [Header("Base Stats")]
     public double baseHealth;

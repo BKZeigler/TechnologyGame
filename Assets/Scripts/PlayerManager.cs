@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour //creates and owns persistent RobotInstances (data) that survive across scenes.
 {
     public static PlayerManager Instance { get; private set; }
 
@@ -17,6 +17,11 @@ public class PlayerManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    public void Start()
+    {
+        //robots.Add(new RobotInstance(starterRobotData));
     }
 
     public List<RobotInstance> GetRobots()
