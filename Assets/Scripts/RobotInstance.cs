@@ -1,3 +1,4 @@
+using UnityEngine;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -57,5 +58,49 @@ public class RobotInstance
 
         foreach (int passiveId in tech.passiveIDs)
             passiveDict[passiveId] = PassiveDatabase.GetPassive(passiveId);
+    }
+
+    public RobotSaveData ToSaveData()
+    {
+        return new RobotSaveData
+        {
+            robotDataName = data.name,
+            health = health,
+            atkdamage = atkdamage,
+            abilitydamage = abilitydamage,
+            abilityCount = abilityCount,
+            atkspd = atkspd,
+            castspd = castspd,
+            luck = luck,
+            abilityIDs = new List<int>(abilityDict.Keys),
+            passiveIDs = new List<int>(passiveDict.Keys),
+            technologyIDs = new List<int>(technologyIDs)
+        };
+    }
+
+    public static RobotInstance FromSaveData(RobotSaveData save)
+    {
+        RobotData robotData = Resources.Load<RobotData>(save.robotDataName);
+        RobotInstance instance = new RobotInstance(robotData);
+
+        instance.health = save.health;
+        instance.atkdamage = save.atkdamage;
+        instance.abilitydamage = save.abilitydamage;
+        instance.abilityCount = save.abilityCount;
+        instance.atkspd = save.atkspd;
+        instance.castspd = save.castspd;
+        instance.luck = save.luck;
+
+        instance.abilityDict.Clear();
+        foreach (int id in save.abilityIDs)
+            instance.abilityDict[id] = AbilityDatabase.GetAbility(id);
+
+        instance.passiveDict.Clear();
+        foreach (int id in save.passiveIDs)
+            instance.passiveDict[id] = PassiveDatabase.GetPassive(id);
+
+        instance.technologyIDs = new List<int>(save.technologyIDs);
+
+        return instance;
     }
 }

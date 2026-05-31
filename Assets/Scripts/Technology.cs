@@ -37,4 +37,29 @@ public class Technology : ScriptableObject
         foreach (var passiveId in passiveIDs)
             Debug.Log($"Passive ID: {passiveId}");
     }
+
+    public TechnologySaveData ToSaveData()
+    {
+        return new TechnologySaveData
+        {
+            id = id,
+            techName = techName,
+            stats = stats,
+            abilityIDs = new List<int>(abilityIDs),
+            passiveIDs = new List<int>(passiveIDs)
+        };
+    }
+
+    public static Technology FromSaveData(TechnologySaveData save)
+    {
+        Technology tech = ScriptableObject.CreateInstance<Technology>();
+
+        tech.id = save.id;
+        tech.techName = save.techName;
+        tech.stats = save.stats;
+        tech.abilityIDs = new List<int>(save.abilityIDs);
+        tech.passiveIDs = new List<int>(save.passiveIDs);
+
+        return tech;
+    }
 }

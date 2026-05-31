@@ -3,38 +3,44 @@ using UnityEngine;
 
 public class TechnologyManager : MonoBehaviour
 {
-    public List<Technology> pendingTech = new List<Technology>();
+    private Dictionary<int, Technology> techDict = new Dictionary<int, Technology>();
+    private int nextId = 0;
 
-    public void AddTech(Technology tech)
+    public Technology RegisterTech(Technology tech)
     {
-        pendingTech.Add(tech);
+        tech.id = nextId++;
+        techDict[tech.id] = tech;
+        return tech;
     }
 
-    public Technology GetTech(int index)
+    public Technology GetTech(int id)
     {
-        return pendingTech[index];
+        return techDict.TryGetValue(id, out var tech) ? tech : null;
     }
 
-    public void RemoveFirstTech()
+    public void ClearAll()
     {
-        if (pendingTech.Count > 0)
+        techDict.Clear();
+        nextId = 0;
+    }
+
+    public IEnumerable<Technology> GetAllTechnologies()
+    {
+        return techDict.Values;
+    }
+
+    public void LoadTechnologies(List<TechnologySaveData> saves)
+    {
+        ClearAll();
+
+        foreach (var save in saves)
         {
-            pendingTech.RemoveAt(0);
-        }
-    }   
+            Technology tech = Technology.FromSaveData(save);
+            techDict[tech.id] = tech;
 
-    public Technology GetFirstTech()
-    {
-        if (pendingTech.Count > 0)
-        {
-            return pendingTech[0];
+            // Ensure nextId is always ahead
+            if (tech.id >= nextId)
+             nextId = tech.id + 1;
         }
-        return null;
     }
-
-    public void ClearTech()
-    {
-        pendingTech.Clear();
-    }
-    
 }

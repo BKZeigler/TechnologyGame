@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TechController : MonoBehaviour
+public class TechController : MonoBehaviour // old script, used for early testing of tech creation and merging. Can be removed later.
 {
     public Robot robot;                 // The MonoBehaviour
     public TechnologyCreator techCreator;
@@ -11,7 +11,7 @@ public class TechController : MonoBehaviour
     public void OnCreateTechButton()
     {
         lastCreatedTech = techCreator.CreateTechnology(100);
-        techManager.AddTech(lastCreatedTech);
+        //techManager.AddTech(lastCreatedTech);
         Debug.Log("Created technology!");
     }
 
@@ -25,7 +25,7 @@ public class TechController : MonoBehaviour
 
         robot.instance.MergeTech(lastCreatedTech);
 
-        techManager.RemoveFirstTech();
+        //techManager.RemoveFirstTech();
         lastCreatedTech = null;
 
         Debug.Log("Merged tech into robot.");
