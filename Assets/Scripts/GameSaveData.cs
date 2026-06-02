@@ -6,4 +6,9 @@ public class GameSaveData
 {
     public List<RobotSaveData> robots = new List<RobotSaveData>();
     public List<TechnologySaveData> technologies = new List<TechnologySaveData>();
+
+    // Map-related
+    public int playerX;
+    public int playerY;
+    public List<TileEventSaveData> mapEvents = new List<TileEventSaveData>();
 }

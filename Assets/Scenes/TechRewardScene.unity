@@ -2026,6 +2026,7 @@ MonoBehaviour:
   robotStatsText: {fileID: 213353628}
   robotTechListText: {fileID: 308075348}
   mergeButton: {fileID: 990849279}
+  backButton: {fileID: 1793350071}
 --- !u!1 &1793350069
 GameObject:
   m_ObjectHideFlags: 0

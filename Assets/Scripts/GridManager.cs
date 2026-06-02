@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GridManager : MonoBehaviour
 {
@@ -9,12 +10,9 @@ public class GridManager : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("GridManager Awake in scene: " + gameObject.scene.name);
         grid = new Tile[width, height];
         GenerateGrid();
-    }
-    void Start()
-    {
-
     }
 
     void GenerateGrid()
@@ -36,19 +34,31 @@ public class GridManager : MonoBehaviour
 
     TileEventType RollEventForTile(int x, int y)
     {
-        // Boss tile (top-right)
         if (x == width - 1 && y == height - 1)
-        {
             return TileEventType.Boss;
-        }
 
-        // Random event for now
         int roll = Random.Range(0, 2);
 
         if (roll == 0) return TileEventType.Battle;
         if (roll == 1) return TileEventType.TechReward;
 
         return TileEventType.None;
+    }
+
+    public IEnumerable<Tile> AllTiles
+    {
+        get
+        {
+            for (int x = 0; x < width; x++)
+                for (int y = 0; y < height; y++)
+                    yield return grid[x, y];
+        }
+    }
+
+    public Tile GetTile(int x, int y)
+    {
+        if (x < 0 || x >= width || y < 0 || y >= height) return null;
+        return grid[x, y];
     }
 }
 

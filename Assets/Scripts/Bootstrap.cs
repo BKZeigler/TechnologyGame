@@ -6,7 +6,7 @@ public class Bootstrap : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("MapScene");
         //Load the main menu here
     }
 

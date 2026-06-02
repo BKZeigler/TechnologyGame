@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class TechnologyRewardUI : MonoBehaviour
 {
@@ -27,13 +28,16 @@ public class TechnologyRewardUI : MonoBehaviour
     private RobotInstance selectedRobot;
     private List<Button> robotButtons = new List<Button>();
 
+    [Header("Navigation")]
+    public Button backButton;
+
     void Start()
     {
         techManager = FindFirstObjectByType<TechnologyManager>();
         GenerateTech();
         PopulateRobotButtons();
         mergeButton.onClick.AddListener(OnMergePressed);
-
+        backButton.onClick.AddListener(ReturnToMap);
         robotDisplayPanel.SetActive(false);
     }
 
@@ -107,6 +111,10 @@ public class TechnologyRewardUI : MonoBehaviour
         Debug.Log($"Merged {generatedTech.techName} into {selectedRobot.data.robotName}");
 
         DisplayRobotInfo(selectedRobot); // update display to show new stats and tech list
+
+        // 🔒 Prevent merging again
+        generatedTech = null;
+        mergeButton.interactable = false;
     }
 
     void HighlightSelectedButton(Button selected)
@@ -164,10 +172,15 @@ public class TechnologyRewardUI : MonoBehaviour
         {
             foreach (int techId in robot.technologyIDs)
             {
-                Technology tech = techManager.GetTech(techId);
-                robotTechListText.text += $"- {tech.techName}\n";
+                if (techManager.TryGetTech(techId, out Technology tech))
+                    robotTechListText.text += $"- {tech.techName}\n";
             }
         }
+    }
+
+    void ReturnToMap()
+    {
+        SceneManager.LoadScene("MapScene");
     }
 
     void OnDestroy()

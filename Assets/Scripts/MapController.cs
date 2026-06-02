@@ -5,13 +5,21 @@ public class MapController : MonoBehaviour
 {
     public PlayerMarker player;
     public GridManager gridManager;
+    [System.NonSerialized]
     private Tile currentTile;
 
     void Start()
     {
-        currentTile = gridManager.grid[0, 0];
-        player.MoveTo(currentTile);
-        UpdateTraversableTiles();
+        //if (PlayerManager.Instance.HasLoadedGame)
+        //{
+            // MapSaveManager will restore position
+            //return;
+        //}
+
+        // NEW GAME fallback
+        //currentTile = gridManager.grid[0, 0];
+        //player.MoveTo(currentTile);
+        //UpdateTraversableTiles();
     }
 
     void Update()
@@ -47,6 +55,9 @@ public class MapController : MonoBehaviour
         player.MoveTo(tile);
         currentTile = tile;
 
+        // Auto-save with explicit map context
+        PlayerManager.Instance.SaveGameFromMap(gridManager, player);
+
         TriggerTileEvent(tile);
 
         UpdateTraversableTiles();
@@ -80,5 +91,18 @@ public class MapController : MonoBehaviour
         GameSceneManager.Instance.LoadEventScene(tile.eventType);
 
         tile.isCleared = true;
+    }
+
+    public void SetCurrentTile(Tile tile)
+    {
+        currentTile = tile;
+        UpdateTraversableTiles();
+    }
+
+    public void MovePlayerWithoutEvent(Tile tile)
+    {
+        player.MoveTo(tile);
+        currentTile = tile;
+        UpdateTraversableTiles();
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,8 @@ public class GameSceneManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     /// <summary>
@@ -51,5 +54,19 @@ public class GameSceneManager : MonoBehaviour
                 Debug.LogWarning("Tile event has no associated scene.");
                 break;
         }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MapScene")
+            StartCoroutine(DelayedLoadGame());
+    }   
+
+    private IEnumerator DelayedLoadGame()
+    {
+        // Wait one frame so GridManager.Awake() and Start() finish
+        yield return null;
+
+        PlayerManager.Instance.LoadGame();
     }
 }

@@ -3,14 +3,28 @@ using UnityEngine;
 
 public class TechnologyManager : MonoBehaviour
 {
+    public static TechnologyManager Instance { get; private set; }
     private Dictionary<int, Technology> techDict = new Dictionary<int, Technology>();
     private int nextId = 0;
 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
     public Technology RegisterTech(Technology tech)
     {
-        tech.id = nextId++;
-        techDict[tech.id] = tech;
-        return tech;
+        Technology newTech = Instantiate(tech); // clone so each tech is independent
+        newTech.id = nextId++;
+        techDict[newTech.id] = newTech;
+        return newTech;
     }
 
     public Technology GetTech(int id)
@@ -18,6 +32,10 @@ public class TechnologyManager : MonoBehaviour
         return techDict.TryGetValue(id, out var tech) ? tech : null;
     }
 
+    public bool TryGetTech(int id, out Technology tech)
+    {
+        return techDict.TryGetValue(id, out tech);
+    }
     public void ClearAll()
     {
         techDict.Clear();

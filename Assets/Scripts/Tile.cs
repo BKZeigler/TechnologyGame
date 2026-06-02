@@ -27,11 +27,23 @@ public class Tile : MonoBehaviour
 
         sr = GetComponent<SpriteRenderer>();
         SetTraversable(traversable);
+        RefreshVisual();
     }
 
     public void SetTraversable(bool value)
     {
         isTraversable = value;
         sr.color = value ? Color.gray : Color.white;
+    }
+
+    public void RefreshVisual()
+    {
+        if (sr == null) sr = GetComponent<SpriteRenderer>();
+
+        // Example: dim cleared tiles
+        if (isCleared)
+            sr.color = Color.black;
+        else
+            SetTraversable(isTraversable);
     }
 }

@@ -80,7 +80,7 @@ public class RobotInstance
 
     public static RobotInstance FromSaveData(RobotSaveData save)
     {
-        RobotData robotData = Resources.Load<RobotData>(save.robotDataName);
+        RobotData robotData = Resources.Load<RobotData>("Robots/" + save.robotDataName);
         RobotInstance instance = new RobotInstance(robotData);
 
         instance.health = save.health;

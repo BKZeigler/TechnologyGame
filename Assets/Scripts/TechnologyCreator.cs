@@ -62,7 +62,7 @@ public class TechnologyCreator : MonoBehaviour
             currentValue -= strongPCount * 30;
         }
 
-        statValue += currentValue;
+        //statValue += currentValue; maybe make the system less lenient by not giving the leftover value as stat boosts? (possible upgrade)
 
         // Create the Technology object
         var tech = ScriptableObject.CreateInstance<Technology>();

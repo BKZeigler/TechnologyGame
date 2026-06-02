@@ -1,13 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerManager : MonoBehaviour //creates and owns persistent RobotInstances (data) that survive across scenes.
+public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
 
     public List<RobotInstance> robots = new List<RobotInstance>();
 
+    public bool HasLoadedGame { get; private set; } = false;
+
     private TechnologyManager techManager;
+    private MapSaveManager mapSaveManager;
 
     private void Awake()
     {
@@ -21,9 +24,10 @@ public class PlayerManager : MonoBehaviour //creates and owns persistent RobotIn
         DontDestroyOnLoad(gameObject);
     }
 
-    public void Start()
+    private void Start()
     {
         techManager = FindFirstObjectByType<TechnologyManager>();
+        mapSaveManager = FindFirstObjectByType<MapSaveManager>();
     }
 
     public List<RobotInstance> GetRobots()
@@ -35,11 +39,11 @@ public class PlayerManager : MonoBehaviour //creates and owns persistent RobotIn
     {
         GameSaveData save = new GameSaveData();
 
-        // Save robots
+        // Robots
         foreach (var robot in robots)
             save.robots.Add(robot.ToSaveData());
 
-        // Save technologies
+        // Technologies
         foreach (var tech in techManager.GetAllTechnologies())
             save.technologies.Add(tech.ToSaveData());
 
@@ -54,24 +58,50 @@ public class PlayerManager : MonoBehaviour //creates and owns persistent RobotIn
             Debug.LogWarning("No save file found");
             return;
         }
+        
+        HasLoadedGame = true;
 
         robots.Clear();
         techManager.ClearAll();
 
-        // Load technologies first
+        // Technologies
         foreach (var techSave in save.technologies)
         {
             Technology tech = Technology.FromSaveData(techSave);
             techManager.RegisterTech(tech);
         }
 
-        // Load robots
+        // Robots
         foreach (var robotSave in save.robots)
         {
             RobotInstance robot = RobotInstance.FromSaveData(robotSave);
             robots.Add(robot);
         }
 
+        // Map
+        if (mapSaveManager != null)
+            mapSaveManager.LoadMap(save);
+
         Debug.Log("Game loaded successfully");
     }
+
+    public void SaveGameFromMap(GridManager grid, PlayerMarker marker)
+    {
+        GameSaveData save = new GameSaveData();
+
+        // Robots
+        foreach (var robot in robots)
+            save.robots.Add(robot.ToSaveData());
+
+        // Technologies
+        foreach (var tech in techManager.GetAllTechnologies())
+            save.technologies.Add(tech.ToSaveData());
+
+        // Map
+        MapSaveManager.Instance.SaveMap(save, grid, marker);
+
+        SaveSystem.Save(save);
+    }
+
+    
 }
