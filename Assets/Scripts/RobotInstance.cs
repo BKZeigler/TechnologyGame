@@ -8,6 +8,7 @@ public class RobotInstance
 
     // Runtime stats
     public double health;
+    public double maxHealth;
     public double atkdamage;
     public double abilitydamage;
     public double abilityCount;
@@ -25,7 +26,8 @@ public class RobotInstance
         this.data = data;
 
         // Initialize from base stats
-        health = data.baseHealth;
+        maxHealth = data.baseHealth;
+        health = maxHealth;
         atkdamage = data.baseAtkDamage;
         abilitydamage = data.baseAbilityDamage;
         abilityCount = data.baseAbilityCount;
@@ -45,7 +47,7 @@ public class RobotInstance
     {
         technologyIDs.Add(tech.id);
 
-        health        += tech.stats[0];
+        maxHealth        += tech.stats[0];
         atkdamage     += 0.05 * tech.stats[1];
         abilitydamage += 0.05 * tech.stats[2];
         atkspd        += 0.01 * tech.stats[3];

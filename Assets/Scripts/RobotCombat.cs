@@ -4,6 +4,7 @@ public class RobotCombat : UnitThinker
 {
     private RobotInstance instance;
     private BattleContext context;
+    public HPBar hpBar;
 
     public void Initialize(RobotInstance instance, BattleContext context)
     {
@@ -12,6 +13,15 @@ public class RobotCombat : UnitThinker
 
         thinkInterval = (float)(1.0 / instance.atkspd); // attack speed scaling
         thinkTimer = thinkInterval;
+
+        // Spawn HP bar
+        GameObject barObj = GameObject.Instantiate(Resources.Load<GameObject>("HPBar"), transform);
+        hpBar = barObj.GetComponent<HPBar>();
+
+        // Position above robot
+        barObj.transform.localPosition = new Vector3(0, 1.2f, 0);
+
+        UpdateHPBar();
     }
 
     protected override void Think()
@@ -28,11 +38,18 @@ public class RobotCombat : UnitThinker
     public void TakeDamage(double amount)
     {
         instance.health -= amount;
+        UpdateHPBar();
 
         if (instance.health <= 0)
         {
             Debug.Log("Robot died");
             Destroy(gameObject);
         }
+    }
+
+    private void UpdateHPBar()
+    {
+        float normalized = (float)(instance.health / instance.maxHealth);
+        hpBar.SetValue(normalized);
     }
 }

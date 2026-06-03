@@ -37,13 +37,14 @@ public class GameSceneManager : MonoBehaviour
         switch (eventType)
         {
             case TileEventType.Battle:
-                LoadScene("TechRewardScene"); // for testing
+                LoadScene("BattleOne"); // for testing
                 //string battleScene = BattlePoolManager.Instance.GetNextBattle();
                 //LoadScene(battleScene);
                 break;
 
             case TileEventType.TechReward:
-                LoadScene("TechRewardScene");
+                LoadScene("BattleOne"); // For testing
+                //LoadScene("TechRewardScene");
                 break;
 
             case TileEventType.Boss:

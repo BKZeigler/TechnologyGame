@@ -300,7 +300,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd5e64bb45ed4049989585188ee54df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
-  enemyPrefabs: []
+  enemyPrefabs:
+  - {fileID: 3591514505713963220, guid: c6a39945f516339459c2e51ed7ae55cb, type: 3}
 --- !u!1 &1356384192
 GameObject:
   m_ObjectHideFlags: 0
