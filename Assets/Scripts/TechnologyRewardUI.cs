@@ -115,6 +115,8 @@ public class TechnologyRewardUI : MonoBehaviour
         // 🔒 Prevent merging again
         generatedTech = null;
         mergeButton.interactable = false;
+
+        PlayerManager.Instance.SaveGameAfterReward();
     }
 
     void HighlightSelectedButton(Button selected)

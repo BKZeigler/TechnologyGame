@@ -10,16 +10,12 @@ public class MapController : MonoBehaviour
 
     void Start()
     {
-        //if (PlayerManager.Instance.HasLoadedGame)
-        //{
-            // MapSaveManager will restore position
-            //return;
-        //}
-
-        // NEW GAME fallback
-        //currentTile = gridManager.grid[0, 0];
-        //player.MoveTo(currentTile);
-        //UpdateTraversableTiles();
+        // If no save was loaded, initialize a new game position
+        if (!PlayerManager.Instance.HasLoadedGame)
+        {
+            Tile startTile = gridManager.GetTile(0, 0);
+            MovePlayerWithoutEvent(startTile);
+        }
     }
 
     void Update()

@@ -103,5 +103,25 @@ public class PlayerManager : MonoBehaviour
         SaveSystem.Save(save);
     }
 
+    public void SaveGameAfterReward()
+    {
+        // Load the existing save so we don't wipe map data
+        GameSaveData save = SaveSystem.Load();
+        if (save == null)
+            save = new GameSaveData(); // fallback for brand new game
+
+        // Robots
+        save.robots.Clear();
+        foreach (var robot in robots)
+            save.robots.Add(robot.ToSaveData());
+
+        // Technologies
+        save.technologies.Clear();
+        foreach (var tech in techManager.GetAllTechnologies())
+            save.technologies.Add(tech.ToSaveData());
+
+        SaveSystem.Save(save);
+    }
+
     
 }

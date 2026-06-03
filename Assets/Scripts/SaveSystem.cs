@@ -23,4 +23,12 @@ public static class SaveSystem
         string json = File.ReadAllText(SavePath);
         return JsonUtility.FromJson<GameSaveData>(json);
     }
+
+    public static void DeleteSave()
+    {
+        if (File.Exists(SavePath))
+            File.Delete(SavePath);
+
+        Debug.Log("Save file deleted at: " + SavePath);
+    }
 }

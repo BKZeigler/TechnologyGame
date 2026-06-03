@@ -1,32 +1,29 @@
 using UnityEngine;
 
-public static class RobotFactory // Takes a RobotInstance and turns it into a live GameObject
+public static class RobotFactory
 {
-    public static Robot SpawnRobot(RobotData data, Vector3 position)
+    public static GameObject SpawnRobot(RobotData data, Vector3 position)
     {
-        // Create the runtime instance (persistent data)
+        // Create runtime instance
         RobotInstance instance = new RobotInstance(data);
 
-        // Instantiate the prefab
+        // Instantiate prefab
         GameObject obj = GameObject.Instantiate(data.prefab, position, Quaternion.identity);
 
-        // Get the Robot MonoBehaviour
+        // Inject instance
         Robot robot = obj.GetComponent<Robot>();
-
-        // Inject the instance
         robot.Initialize(instance);
 
-        return robot;
+        return obj; // return the GameObject
     }
 
-    public static Robot SpawnRobot(RobotInstance instance, Vector3 position) //RobotFactory.SpawnRobot(robotInstances[i], spawnPos);
+    public static GameObject SpawnRobot(RobotInstance instance, Vector3 position)
     {
-        // Instantiate from existing instance (e.g., PlayerManager robots)
         GameObject obj = GameObject.Instantiate(instance.data.prefab, position, Quaternion.identity);
 
         Robot robot = obj.GetComponent<Robot>();
         robot.Initialize(instance);
 
-        return robot;
+        return obj; // return the GameObject
     }
 }

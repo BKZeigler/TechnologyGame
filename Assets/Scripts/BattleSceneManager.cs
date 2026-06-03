@@ -1,21 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class BattleSceneManager : MonoBehaviour // spawns robots into the scene, instantiates them using RobotFactory
+public class BattleSceneManager : MonoBehaviour
 {
-
     [Header("Spawn Settings")]
-    public float topY = 3.5f;      // Y position for enemies
-    public float bottomY = -3.5f;  // Y position for player robots
-    public float horizontalPadding = 1f; // space from screen edges
+    public float topY = 3.5f;
+    public float bottomY = -3.5f;
+    public float horizontalPadding = 1f;
+
+    private BattleContext context;
 
     void Start()
     {
+        context = FindAnyObjectByType<BattleContext>(); // safe replacement for deprecated API
+
         var robotInstances = PlayerManager.Instance.GetRobots();
-        var enemyPrefabs = FindFirstObjectByType<EnemyManager>().GetEnemies();
+        var enemyPrefabs = EnemyManager.Instance.GetEnemies(); // use your existing manager
 
         SpawnRobots(robotInstances, bottomY);
-        SpawnUnits(enemyPrefabs, topY);
+        SpawnEnemies(enemyPrefabs, topY);
     }
 
     void SpawnRobots(List<RobotInstance> robots, float yPosition)
@@ -29,16 +32,18 @@ public class BattleSceneManager : MonoBehaviour // spawns robots into the scene,
             float xPos = -screenWidth / 2f + horizontalPadding + spacing * (i + 1);
             Vector3 spawnPos = new Vector3(xPos, yPosition, 0);
 
-            // Instantiate prefab from RobotData
-            RobotFactory.SpawnRobot(robots[i], spawnPos);
+            // Spawn robot using your existing factory
+            GameObject robotObj = RobotFactory.SpawnRobot(robots[i], spawnPos);
 
-            // Inject the RobotInstance into the Robot MonoBehaviour
-            //Robot robotMB = robotObj.GetComponent<Robot>();
-            //robotMB.Initialize(robots[i]);
+            // Inject combat logic
+            RobotCombat combat = robotObj.GetComponent<RobotCombat>();
+            combat.Initialize(robots[i], context);
+
+            context.robots.Add(combat);
         }
     }
 
-    void SpawnUnits(List<GameObject> units, float yPosition)
+    void SpawnEnemies(List<GameObject> units, float yPosition)
     {
         if (units == null || units.Count == 0)
             return;
@@ -51,7 +56,13 @@ public class BattleSceneManager : MonoBehaviour // spawns robots into the scene,
         {
             float xPos = -screenWidth / 2f + horizontalPadding + spacing * (i + 1);
             Vector3 spawnPos = new Vector3(xPos, yPosition, 0);
-            Instantiate(units[i], spawnPos, Quaternion.identity);
+
+            GameObject enemyObj = Instantiate(units[i], spawnPos, Quaternion.identity);
+
+            EnemyCombat combat = enemyObj.GetComponent<EnemyCombat>();
+            combat.Initialize(context);
+
+            context.enemies.Add(combat);
         }
     }
 }
