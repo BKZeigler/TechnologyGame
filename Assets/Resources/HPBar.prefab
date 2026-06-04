@@ -36,9 +36,9 @@ RectTransform:
   - {fileID: 447015674046787183}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 416.2, y: 238.9}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.2000122, y: -0.1000061}
   m_SizeDelta: {x: 100, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8353474631091272187
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5839acd2036fd1941af168e5915489e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HPBar
-  fill: {fileID: 7032539815519791033}
+  fill: {fileID: 6323368246952946501}
 --- !u!1 &6857485482013082720
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,7 +142,7 @@ GameObject:
   m_Component:
   - component: {fileID: 447015674046787183}
   - component: {fileID: 1639992329999302697}
-  - component: {fileID: 7032539815519791033}
+  - component: {fileID: 6323368246952946501}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -166,8 +166,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120.38269, y: 31.596375}
-  m_SizeDelta: {x: 100, y: 90}
+  m_AnchoredPosition: {x: 0, y: 0.00019454956}
+  m_SizeDelta: {x: 100, y: 0.00061035}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &1639992329999302697
 CanvasRenderer:
@@ -177,7 +177,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6857485482013082720}
   m_CullTransparentMesh: 1
---- !u!114 &7032539815519791033
+--- !u!114 &6323368246952946501
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.100398645, g: 0.90188676, b: 0.23350672, a: 1}
+  m_Color: {r: 0.10092555, g: 0.8490566, b: 0.17416966, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

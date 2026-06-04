@@ -73,6 +73,7 @@ public class TechnologyCreator : MonoBehaviour
         // Assign stats and IDs
         tech.stats = CalcStatsArray();
         tech.abilityIDs = CreateAbilityIdList(weakACount, modACount, strongACount);
+        Debug.Log($"Created Technology {tech.techName} with ability IDs: {string.Join(",", tech.abilityIDs)}");
         tech.passiveIDs = CreatePassiveIdList(weakPCount, modPCount, strongPCount);
 
         return tech;
@@ -117,6 +118,10 @@ public class TechnologyCreator : MonoBehaviour
     List<int> CreateAbilityIdList(int weakCount, int modCount, int strongCount)
     {
         var ids = new List<int>();
+
+        // For now, just give the BasicDamage ability if weakCount > 0
+        for (int i = 0; i < weakCount; i++)
+            ids.Add(1); // ID of BasicDamage
 
         // TODO: pull from your tiered ability pools
         // Example:

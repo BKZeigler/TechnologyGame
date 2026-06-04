@@ -16,8 +16,8 @@ MonoBehaviour:
   prefab: {fileID: 5959446718097869427, guid: 5aa4705ed3e7ac148b52863ae7a8d889, type: 3}
   baseHealth: 1000
   baseAtkDamage: 1
-  baseAbilityDamage: 0
-  baseAbilityCount: 0
+  baseAbilityDamage: 1
+  baseAbilityCount: 1
   baseAtkSpeed: 1
   baseCastSpeed: 0
   baseLuck: 0

@@ -39,6 +39,8 @@ public class BattleSceneManager : MonoBehaviour
             RobotCombat combat = robotObj.GetComponent<RobotCombat>();
             combat.Initialize(robots[i], context);
 
+            robots[i].combat = combat; 
+
             context.robots.Add(combat);
         }
     }

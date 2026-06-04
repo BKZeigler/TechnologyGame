@@ -43,8 +43,8 @@ public class GameSceneManager : MonoBehaviour
                 break;
 
             case TileEventType.TechReward:
-                LoadScene("BattleOne"); // For testing
-                //LoadScene("TechRewardScene");
+                //LoadScene("BattleOne"); // For testing
+                LoadScene("TechRewardScene");
                 break;
 
             case TileEventType.Boss:

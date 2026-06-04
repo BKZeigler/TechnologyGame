@@ -108,6 +108,7 @@ MonoBehaviour:
   instance:
     data: {fileID: 0}
     health: 0
+    maxHealth: 0
     atkdamage: 0
     abilitydamage: 0
     abilityCount: 0
@@ -127,3 +128,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a843d699b0f66547a429a7d3f15922c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RobotCombat
+  hpBar: {fileID: 0}

@@ -3,13 +3,13 @@ using UnityEngine;
 public class RobotCombat : UnitThinker
 {
     private RobotInstance instance;
-    private BattleContext context;
+    public BattleContext Context { get; private set; }
     public HPBar hpBar;
 
     public void Initialize(RobotInstance instance, BattleContext context)
     {
         this.instance = instance;
-        this.context = context;
+        this.Context = context;
 
         thinkInterval = (float)(1.0 / instance.atkspd); // attack speed scaling
         thinkTimer = thinkInterval;
@@ -26,10 +26,10 @@ public class RobotCombat : UnitThinker
 
     protected override void Think()
     {
-        if (context.enemies.Count == 0)
+        if (Context.enemies.Count == 0)
             return;
 
-        EnemyCombat enemy = context.enemies[0]; // later: targeting rules
+        EnemyCombat enemy = Context.enemies[0]; // later: targeting rules
 
         enemy.TakeDamage(instance.atkdamage);
         Debug.Log($"Robot dealt {instance.atkdamage} damage");

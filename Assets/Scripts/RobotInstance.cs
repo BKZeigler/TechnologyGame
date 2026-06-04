@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [System.Serializable]
 public class RobotInstance
 {
     public RobotData data;
+    public RobotCombat combat;
 
     // Runtime stats
     public double health;
@@ -15,6 +17,8 @@ public class RobotInstance
     public double atkspd;
     public double castspd;
     public double luck;
+
+    private int nextAbilityIndex = 0;
 
     // Runtime abilities/passives/techs (IDs only)
     public Dictionary<int, AbilityData> abilityDict = new Dictionary<int, AbilityData>();
@@ -55,8 +59,21 @@ public class RobotInstance
         abilityCount  += 0.02 * tech.stats[5];
         luck          += 0.1  * tech.stats[6];
 
-        foreach (int abilityId in tech.abilityIDs)
-            abilityDict[abilityId] = AbilityDatabase.GetAbility(abilityId);
+        foreach (int id in tech.abilityIDs)
+        {
+            AbilityData ability = AbilityDatabase.GetAbility(id);
+            if (ability != null)
+            {
+                abilityDict[id] = ability;
+
+                Debug.Log("---- AbilityDict Contents After Merge ----");
+                foreach (var kvp in abilityDict)
+                {
+                    Debug.Log($"Key = {kvp.Key}, Ability = {kvp.Value.abilityName}");
+                }
+                Debug.Log("------------------------------------------");
+            }
+        }
 
         foreach (int passiveId in tech.passiveIDs)
             passiveDict[passiveId] = PassiveDatabase.GetPassive(passiveId);
@@ -104,5 +121,28 @@ public class RobotInstance
         instance.technologyIDs = new List<int>(save.technologyIDs);
 
         return instance;
+    }
+
+    public void CastNextAbilities()
+    {
+        Debug.Log($"{data.name} is casting next abilities...");
+        int count = (int)Math.Floor(abilityCount);
+        if (count <= 0) return;
+
+        if (abilityDict.Count == 0)
+            return; // <-- prevents divide-by-zero
+
+        var keys = new List<int>(abilityDict.Keys);
+
+        for (int i = 0; i < count; i++)
+        {
+            int index = (nextAbilityIndex + i) % keys.Count;
+            int abilityId = keys[index];
+            AbilityData ability = abilityDict[abilityId];
+
+            ability.Execute(this);
+        }
+
+        nextAbilityIndex = (nextAbilityIndex + count) % keys.Count;
     }
 }

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class EnemyCombat : UnitThinker
 {
-    public double health = 50;
-    public double maxHealth = 50;
+    public double health = 500;
+    public double maxHealth = 500;
     public double attackDamage = 5;
     public double attackSpeed = 1;
     public HPBar hpBar;
