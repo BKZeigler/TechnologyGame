@@ -31,13 +31,24 @@ public class TechnologyRewardUI : MonoBehaviour
     [Header("Navigation")]
     public Button backButton;
 
+    [Header("Robot Paging")]
+    public Button leftArrowButton;
+    public Button rightArrowButton;
+
+    private List<RobotInstance> robots;
+    private int robotStartIndex = 0;
+    private const int visibleRobotCount = 2;
+
     void Start()
     {
         techManager = FindFirstObjectByType<TechnologyManager>();
+        robots = PlayerManager.Instance.GetRobots(); // store once
         GenerateTech();
         PopulateRobotButtons();
         mergeButton.onClick.AddListener(OnMergePressed);
         backButton.onClick.AddListener(ReturnToMap);
+        leftArrowButton.onClick.AddListener(() => Rotate(-1));
+        rightArrowButton.onClick.AddListener(() => Rotate(1));
         robotDisplayPanel.SetActive(false);
     }
 
@@ -60,7 +71,7 @@ public class TechnologyRewardUI : MonoBehaviour
             statsText.text += $"{statNames[i]}: {generatedTech.stats[i]}\n";
 
         // Abilities
-        abilitiesText.text = "";
+        abilitiesText.text = "Abilities:\n";
         foreach (int id in generatedTech.abilityIDs)
         {
             var ability = AbilityDatabase.GetAbility(id);
@@ -68,7 +79,7 @@ public class TechnologyRewardUI : MonoBehaviour
         }
 
         // Passives
-        passivesText.text = "";
+        passivesText.text = "Passives:\n";
         foreach (int id in generatedTech.passiveIDs)
         {
             var passive = PassiveDatabase.GetPassive(id);
@@ -78,16 +89,28 @@ public class TechnologyRewardUI : MonoBehaviour
 
     void PopulateRobotButtons()
     {
-        var robots = PlayerManager.Instance.GetRobots();
-
-        foreach (var robot in robots)
+        foreach (var btn in robotButtons)
         {
+            if (btn != null)
+                Destroy(btn.gameObject);
+        }
+        robotButtons.Clear();
+
+        if (robots == null || robots.Count == 0)
+        return;
+
+        int countToShow = Mathf.Min(visibleRobotCount, robots.Count);
+
+        for (int i = 0; i < countToShow; i++)
+        {
+            int index = (robotStartIndex + i) % robots.Count;
+            RobotInstance robot = robots[index];
+
             GameObject btnObj = Instantiate(robotButtonPrefab, robotButtonParent);
             Button btn = btnObj.GetComponent<Button>();
             TextMeshProUGUI txt = btnObj.GetComponentInChildren<TextMeshProUGUI>();
 
             txt.text = robot.data.robotName;
-
             robotButtons.Add(btn);
 
             btn.onClick.AddListener(() =>
@@ -97,6 +120,11 @@ public class TechnologyRewardUI : MonoBehaviour
                 DisplayRobotInfo(robot);
             });
         }
+
+        // Show arrows only if needed
+        bool showArrows = robots.Count > visibleRobotCount;
+        leftArrowButton.gameObject.SetActive(showArrows);
+        rightArrowButton.gameObject.SetActive(showArrows);
     }
 
     void OnMergePressed()
@@ -189,4 +217,23 @@ public class TechnologyRewardUI : MonoBehaviour
     {
         techManager.ClearAll();
     }
+
+    void Rotate(int direction)
+    {
+        if (robots == null || robots.Count <= visibleRobotCount)
+            return;
+
+        int step;
+
+        // If odd number of robots, move by 1
+        if (robots.Count % 2 == 1)
+            step = 1;
+        else
+            step = visibleRobotCount; // normally 2
+
+        robotStartIndex = (robotStartIndex + direction * step + robots.Count) % robots.Count;
+
+        PopulateRobotButtons();
+    }
+
 }
