@@ -17,13 +17,14 @@ public class RobotInstance
     public double atkspd;
     public double castspd;
     public double luck;
-
+    public float tempDamageMultiplier = 0f;
     private int nextAbilityIndex = 0;
 
     // Runtime abilities/passives/techs (IDs only)
     public Dictionary<int, AbilityData> abilityDict = new Dictionary<int, AbilityData>();
     public Dictionary<int, PassiveData> passiveDict = new Dictionary<int, PassiveData>();
     public List<int> technologyIDs = new List<int>();
+    public List<Buff> activeBuffs = new List<Buff>();
 
     public RobotInstance(RobotData data)
     {
@@ -140,9 +141,46 @@ public class RobotInstance
             int abilityId = keys[index];
             AbilityData ability = abilityDict[abilityId];
 
+            TriggerBeforeAbility(ability);
+
             ability.Execute(this);
+
+            TriggerAfterAbility(ability);
         }
 
         nextAbilityIndex = (nextAbilityIndex + count) % keys.Count;
+    }
+
+    public void AddBuff(Buff buff)
+    {
+        // Try to stack existing buff
+        foreach (var b in activeBuffs)
+        {
+            if (b.GetType() == buff.GetType())
+            {
+                b.stacks += buff.stacks;
+                b.OnApply(this);
+                return;
+            }
+        }
+
+        // Otherwise add new buff
+        activeBuffs.Add(buff);
+        buff.OnApply(this);
+    }
+
+    public void TriggerBeforeAbility(AbilityData ability)
+    {
+        foreach (var buff in activeBuffs)
+            buff.OnBeforeAbility(this, ability);
+    }
+
+    public void TriggerAfterAbility(AbilityData ability)
+    {
+        foreach (var buff in activeBuffs)
+            buff.OnAfterAbility(this, ability);
+
+        // Remove expired buffs
+        activeBuffs.RemoveAll(b => b.ShouldRemove());
     }
 }

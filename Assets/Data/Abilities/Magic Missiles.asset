@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc21c03ee889684faea8cd185969fac, type: 3}
   m_Name: Magic Missiles
   m_EditorClassIdentifier: Assembly-CSharp::MagicMissilesAbility
-  id: 0
-  abilityName: 
-  description: 
+  id: 2
+  abilityName: Magic Missiles
+  description: 'Shoot (0.5*AP) Missiles each dealing (0.5*AP Damage) '
   baseDamage: 0
   apScaling: 0
   luckScaling: 0

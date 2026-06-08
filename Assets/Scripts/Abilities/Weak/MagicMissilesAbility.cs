@@ -17,7 +17,8 @@ public class MagicMissilesAbility : AbilityData
         int missileCount = Mathf.Max(1, Mathf.FloorToInt((float)(caster.abilitydamage * 0.5)));
 
         // Damage per missile
-        double damagePerMissile = 2 + (caster.abilitydamage * 0.5);
+        double damagePerMissile = (2 + (caster.abilitydamage * 0.5)) * (1 + caster.tempDamageMultiplier);
+        caster.tempDamageMultiplier = 0f;
 
         // Fire missiles
         for (int i = 0; i < missileCount; i++)
