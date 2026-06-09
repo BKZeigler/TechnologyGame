@@ -159,14 +159,14 @@ public class RobotInstance
             if (b.GetType() == buff.GetType())
             {
                 b.stacks += buff.stacks;
-                b.OnApply(this);
+                b.OnStack(this, buff.stacks);
                 return;
             }
         }
 
         // Otherwise add new buff
         activeBuffs.Add(buff);
-        buff.OnApply(this);
+        buff.OnFirstApply(this);
     }
 
     public void TriggerBeforeAbility(AbilityData ability)
@@ -182,5 +182,19 @@ public class RobotInstance
 
         // Remove expired buffs
         activeBuffs.RemoveAll(b => b.ShouldRemove());
+    }
+
+    public void UpdateBuffs(float deltaTime)
+    {
+        foreach (var buff in activeBuffs)
+            buff.Update(this, deltaTime);
+
+        activeBuffs.RemoveAll(b => b.ShouldRemove());
+    }
+
+    public void TriggerOnBasicAttack(EnemyCombat target)
+    {
+        foreach (var buff in activeBuffs)
+            buff.OnBasicAttack(this, target);
     }
 }

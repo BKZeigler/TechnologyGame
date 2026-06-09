@@ -6,6 +6,14 @@ public class RobotCombat : UnitThinker
     public BattleContext Context { get; private set; }
     public HPBar hpBar;
 
+    protected override void Update()
+    {
+        // Tick buffs first
+        instance.UpdateBuffs(Time.deltaTime);
+
+        // Then run the normal Think() timer
+        base.Update();
+    }
     public void Initialize(RobotInstance instance, BattleContext context)
     {
         this.instance = instance;
@@ -32,6 +40,7 @@ public class RobotCombat : UnitThinker
         EnemyCombat enemy = Context.enemies[0]; // later: targeting rules
 
         enemy.TakeDamage(instance.atkdamage);
+        instance.TriggerOnBasicAttack(enemy);
         Debug.Log($"Robot dealt {instance.atkdamage} damage");
     }
 
