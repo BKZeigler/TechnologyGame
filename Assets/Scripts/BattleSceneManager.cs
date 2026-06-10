@@ -17,8 +17,22 @@ public class BattleSceneManager : MonoBehaviour
         var robotInstances = PlayerManager.Instance.GetRobots();
         var enemyPrefabs = EnemyManager.Instance.GetEnemies(); // use your existing manager
 
+        // Initialize battle stats
+        foreach (var robot in robotInstances)
+            robot.InitializeBattleStats();
+
         SpawnRobots(robotInstances, bottomY);
         SpawnEnemies(enemyPrefabs, topY);
+    }
+
+    public void EndBattle()
+    {
+        var robots = PlayerManager.Instance.GetRobots();
+
+        foreach (var robot in robots)
+            robot.ResetBuffs();
+
+        PlayerManager.Instance.ResetGlobalBuffs();
     }
 
     void SpawnRobots(List<RobotInstance> robots, float yPosition)

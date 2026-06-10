@@ -8,7 +8,20 @@ public class RobotInstance
     public RobotData data;
     public RobotCombat combat;
 
-    // Runtime stats
+    // -------------------------
+    // Persistent (saved) stats
+    // -------------------------
+    public double baseHealth;
+    public double baseAtkDamage;
+    public double baseAbilityDamage;
+    public double baseAbilityCount;
+    public double baseAtkSpd;
+    public double baseCastSpd;
+    public double baseLuck;
+
+    // -------------------------
+    // Battle-only stats
+    // -------------------------
     public double health;
     public double maxHealth;
     public double atkdamage;
@@ -17,6 +30,7 @@ public class RobotInstance
     public double atkspd;
     public double castspd;
     public double luck;
+
     public float tempDamageMultiplier = 0f;
     private int nextAbilityIndex = 0;
 
@@ -26,21 +40,26 @@ public class RobotInstance
     public List<int> technologyIDs = new List<int>();
     public List<Buff> activeBuffs = new List<Buff>();
 
+    // -------------------------
+    // Constructor
+    // -------------------------
     public RobotInstance(RobotData data)
     {
         this.data = data;
 
-        // Initialize from base stats
-        maxHealth = data.baseHealth;
-        health = maxHealth;
-        atkdamage = data.baseAtkDamage;
-        abilitydamage = data.baseAbilityDamage;
-        abilityCount = data.baseAbilityCount;
-        atkspd = data.baseAtkSpeed;
-        castspd = data.baseCastSpeed;
-        luck = data.baseLuck;
+        // Load persistent stats
+        baseHealth        = data.baseHealth;
+        baseAtkDamage     = data.baseAtkDamage;
+        baseAbilityDamage = data.baseAbilityDamage;
+        baseAbilityCount  = data.baseAbilityCount;
+        baseAtkSpd        = data.baseAtkSpeed;
+        baseCastSpd       = data.baseCastSpeed;
+        baseLuck          = data.baseLuck;
 
-        // Initialize abilities/passives from base IDs
+        // Initialize battle stats
+        InitializeBattleStats();
+
+        // Load base abilities/passives
         foreach (int id in data.baseAbilityIDs)
             abilityDict[id] = AbilityDatabase.GetAbility(id);
 
@@ -48,50 +67,67 @@ public class RobotInstance
             passiveDict[id] = PassiveDatabase.GetPassive(id);
     }
 
+    // -------------------------
+    // Battle Initialization
+    // -------------------------
+    public void InitializeBattleStats()
+    {
+        maxHealth     = baseHealth;
+        health        = baseHealth;
+        atkdamage     = baseAtkDamage;
+        abilitydamage = baseAbilityDamage;
+        abilityCount  = baseAbilityCount;
+        atkspd        = baseAtkSpd;
+        castspd       = baseCastSpd;
+        luck          = baseLuck;
+
+        tempDamageMultiplier = 0f;
+        activeBuffs.Clear();
+    }
+
+    // -------------------------
+    // Tech merging (persistent)
+    // -------------------------
     public void MergeTech(Technology tech)
     {
         technologyIDs.Add(tech.id);
 
-        maxHealth        += tech.stats[0];
-        atkdamage     += 0.05 * tech.stats[1];
-        abilitydamage += 0.05 * tech.stats[2];
-        atkspd        += 0.01 * tech.stats[3];
-        castspd       += 0.01 * tech.stats[4];
-        abilityCount  += 0.02 * tech.stats[5];
-        luck          += 0.1  * tech.stats[6];
+        baseHealth        += tech.stats[0];
+        baseAtkDamage     += 0.05 * tech.stats[1];
+        baseAbilityDamage += 0.05 * tech.stats[2];
+        baseAtkSpd        += 0.01 * tech.stats[3];
+        baseCastSpd       += 0.01 * tech.stats[4];
+        baseAbilityCount  += 0.02 * tech.stats[5];
+        baseLuck          += 0.1  * tech.stats[6];
+
+        // Update battle stats immediately if in battle
+        InitializeBattleStats();
 
         foreach (int id in tech.abilityIDs)
-        {
-            AbilityData ability = AbilityDatabase.GetAbility(id);
-            if (ability != null)
-            {
-                abilityDict[id] = ability;
-
-                Debug.Log("---- AbilityDict Contents After Merge ----");
-                foreach (var kvp in abilityDict)
-                {
-                    Debug.Log($"Key = {kvp.Key}, Ability = {kvp.Value.abilityName}");
-                }
-                Debug.Log("------------------------------------------");
-            }
-        }
+            abilityDict[id] = AbilityDatabase.GetAbility(id);
 
         foreach (int passiveId in tech.passiveIDs)
             passiveDict[passiveId] = PassiveDatabase.GetPassive(passiveId);
     }
 
+    // -------------------------
+    // Saving / Loading
+    // -------------------------
     public RobotSaveData ToSaveData()
     {
         return new RobotSaveData
         {
             robotDataName = data.name,
-            health = health,
-            atkdamage = atkdamage,
-            abilitydamage = abilitydamage,
-            abilityCount = abilityCount,
-            atkspd = atkspd,
-            castspd = castspd,
-            luck = luck,
+
+            // Save persistent stats
+            health = baseHealth,
+            atkdamage = baseAtkDamage,
+            abilitydamage = baseAbilityDamage,
+            abilityCount = baseAbilityCount,
+            atkspd = baseAtkSpd,
+            castspd = baseCastSpd,
+            luck = baseLuck,
+
             abilityIDs = new List<int>(abilityDict.Keys),
             passiveIDs = new List<int>(passiveDict.Keys),
             technologyIDs = new List<int>(technologyIDs)
@@ -103,13 +139,16 @@ public class RobotInstance
         RobotData robotData = Resources.Load<RobotData>("Robots/" + save.robotDataName);
         RobotInstance instance = new RobotInstance(robotData);
 
-        instance.health = save.health;
-        instance.atkdamage = save.atkdamage;
-        instance.abilitydamage = save.abilitydamage;
-        instance.abilityCount = save.abilityCount;
-        instance.atkspd = save.atkspd;
-        instance.castspd = save.castspd;
-        instance.luck = save.luck;
+        // Load persistent stats
+        instance.baseHealth        = save.health;
+        instance.baseAtkDamage     = save.atkdamage;
+        instance.baseAbilityDamage = save.abilitydamage;
+        instance.baseAbilityCount  = save.abilityCount;
+        instance.baseAtkSpd        = save.atkspd;
+        instance.baseCastSpd       = save.castspd;
+        instance.baseLuck          = save.luck;
+
+        instance.InitializeBattleStats();
 
         instance.abilityDict.Clear();
         foreach (int id in save.abilityIDs)
@@ -124,14 +163,14 @@ public class RobotInstance
         return instance;
     }
 
+    // -------------------------
+    // Ability Casting
+    // -------------------------
     public void CastNextAbilities()
     {
-        Debug.Log($"{data.name} is casting next abilities...");
         int count = (int)Math.Floor(abilityCount);
-        if (count <= 0) return;
-
-        if (abilityDict.Count == 0)
-            return; // <-- prevents divide-by-zero
+        if (count <= 0 || abilityDict.Count == 0)
+            return;
 
         var keys = new List<int>(abilityDict.Keys);
 
@@ -142,18 +181,18 @@ public class RobotInstance
             AbilityData ability = abilityDict[abilityId];
 
             TriggerBeforeAbility(ability);
-
             ability.Execute(this);
-
             TriggerAfterAbility(ability);
         }
 
         nextAbilityIndex = (nextAbilityIndex + count) % keys.Count;
     }
 
+    // -------------------------
+    // Buff System
+    // -------------------------
     public void AddBuff(Buff buff)
     {
-        // Try to stack existing buff
         foreach (var b in activeBuffs)
         {
             if (b.GetType() == buff.GetType())
@@ -164,7 +203,6 @@ public class RobotInstance
             }
         }
 
-        // Otherwise add new buff
         activeBuffs.Add(buff);
         buff.OnFirstApply(this);
     }
@@ -180,7 +218,6 @@ public class RobotInstance
         foreach (var buff in activeBuffs)
             buff.OnAfterAbility(this, ability);
 
-        // Remove expired buffs
         activeBuffs.RemoveAll(b => b.ShouldRemove());
     }
 
@@ -196,5 +233,15 @@ public class RobotInstance
     {
         foreach (var buff in activeBuffs)
             buff.OnBasicAttack(this, target);
+    }
+
+    // -------------------------
+    // Battle Cleanup
+    // -------------------------
+    public void ResetBuffs()
+    {
+        activeBuffs.Clear();
+        tempDamageMultiplier = 0f;
+        InitializeBattleStats();
     }
 }

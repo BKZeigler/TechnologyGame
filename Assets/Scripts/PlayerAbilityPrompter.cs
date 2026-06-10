@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class PlayerAbilityPrompter : MonoBehaviour
 {
-    public float castSpeed = 0.5f; // seconds per cycle = 1 / castSpeed
+    public float castSpeed = 0.5f;
     public int robotsPerPrompt = 3;
 
     private float timer = 0f;
@@ -20,7 +20,10 @@ public class PlayerAbilityPrompter : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (timer >= (1f / castSpeed))
+        float effectiveCastSpeed =
+            castSpeed * PlayerManager.Instance.globalCastSpeedMultiplier;
+
+        if (timer >= (1f / effectiveCastSpeed))
         {
             timer = 0f;
             PromptRobots();

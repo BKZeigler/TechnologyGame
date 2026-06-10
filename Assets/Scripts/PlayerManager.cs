@@ -6,12 +6,29 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; private set; }
 
     public List<RobotInstance> robots = new List<RobotInstance>();
-
     public bool HasLoadedGame { get; private set; } = false;
 
     private TechnologyManager techManager;
     private MapSaveManager mapSaveManager;
 
+    // -------------------------
+    // Global battle buffs
+    // -------------------------
+    public float globalCastSpeedMultiplier = 1f;
+
+    public void AddGlobalCastSpeed(float amount)
+    {
+        globalCastSpeedMultiplier += amount;
+    }
+
+    public void ResetGlobalBuffs()
+    {
+        globalCastSpeedMultiplier = 1f;
+    }
+
+    // -------------------------
+    // Unity Lifecycle
+    // -------------------------
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -30,26 +47,65 @@ public class PlayerManager : MonoBehaviour
         mapSaveManager = FindFirstObjectByType<MapSaveManager>();
     }
 
+    // -------------------------
+    // Robot Access
+    // -------------------------
     public List<RobotInstance> GetRobots()
     {
         return robots;
     }
 
+    // -------------------------
+    // Saving
+    // -------------------------
     public void SaveGame()
     {
         GameSaveData save = new GameSaveData();
 
-        // Robots
         foreach (var robot in robots)
             save.robots.Add(robot.ToSaveData());
 
-        // Technologies
         foreach (var tech in techManager.GetAllTechnologies())
             save.technologies.Add(tech.ToSaveData());
 
         SaveSystem.Save(save);
     }
 
+    public void SaveGameFromMap(GridManager grid, PlayerMarker marker)
+    {
+        GameSaveData save = new GameSaveData();
+
+        foreach (var robot in robots)
+            save.robots.Add(robot.ToSaveData());
+
+        foreach (var tech in techManager.GetAllTechnologies())
+            save.technologies.Add(tech.ToSaveData());
+
+        MapSaveManager.Instance.SaveMap(save, grid, marker);
+
+        SaveSystem.Save(save);
+    }
+
+    public void SaveGameAfterReward()
+    {
+        GameSaveData save = SaveSystem.Load();
+        if (save == null)
+            save = new GameSaveData();
+
+        save.robots.Clear();
+        foreach (var robot in robots)
+            save.robots.Add(robot.ToSaveData());
+
+        save.technologies.Clear();
+        foreach (var tech in techManager.GetAllTechnologies())
+            save.technologies.Add(tech.ToSaveData());
+
+        SaveSystem.Save(save);
+    }
+
+    // -------------------------
+    // Loading
+    // -------------------------
     public void LoadGame()
     {
         GameSaveData save = SaveSystem.Load();
@@ -58,70 +114,27 @@ public class PlayerManager : MonoBehaviour
             Debug.LogWarning("No save file found");
             return;
         }
-        
+
         HasLoadedGame = true;
 
         robots.Clear();
         techManager.ClearAll();
 
-        // Technologies
         foreach (var techSave in save.technologies)
         {
             Technology tech = Technology.FromSaveData(techSave);
             techManager.RegisterTech(tech);
         }
 
-        // Robots
         foreach (var robotSave in save.robots)
         {
             RobotInstance robot = RobotInstance.FromSaveData(robotSave);
             robots.Add(robot);
         }
 
-        // Map
         if (mapSaveManager != null)
             mapSaveManager.LoadMap(save);
 
         Debug.Log("Game loaded successfully");
     }
-
-    public void SaveGameFromMap(GridManager grid, PlayerMarker marker)
-    {
-        GameSaveData save = new GameSaveData();
-
-        // Robots
-        foreach (var robot in robots)
-            save.robots.Add(robot.ToSaveData());
-
-        // Technologies
-        foreach (var tech in techManager.GetAllTechnologies())
-            save.technologies.Add(tech.ToSaveData());
-
-        // Map
-        MapSaveManager.Instance.SaveMap(save, grid, marker);
-
-        SaveSystem.Save(save);
-    }
-
-    public void SaveGameAfterReward()
-    {
-        // Load the existing save so we don't wipe map data
-        GameSaveData save = SaveSystem.Load();
-        if (save == null)
-            save = new GameSaveData(); // fallback for brand new game
-
-        // Robots
-        save.robots.Clear();
-        foreach (var robot in robots)
-            save.robots.Add(robot.ToSaveData());
-
-        // Technologies
-        save.technologies.Clear();
-        foreach (var tech in techManager.GetAllTechnologies())
-            save.technologies.Add(tech.ToSaveData());
-
-        SaveSystem.Save(save);
-    }
-
-    
 }
