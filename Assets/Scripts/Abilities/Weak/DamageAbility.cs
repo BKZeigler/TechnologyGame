@@ -6,7 +6,7 @@ public class DamageAbility : AbilityData
     public override void Execute(RobotInstance caster)
     {
         // Calculate damage
-        double damage = (baseDamage + caster.abilitydamage) * (1 + caster.tempDamageMultiplier);
+        double damage = (baseDamage + caster.battleStats.abilitydamage) * (1 + caster.tempDamageMultiplier);
         caster.tempDamageMultiplier = 0f;
 
         // Get battle context

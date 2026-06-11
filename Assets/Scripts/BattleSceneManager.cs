@@ -33,6 +33,8 @@ public class BattleSceneManager : MonoBehaviour
             robot.ResetBuffs();
 
         PlayerManager.Instance.ResetGlobalBuffs();
+        foreach (var enemy in context.enemies)
+            enemy.activeDebuffs.Clear();
     }
 
     void SpawnRobots(List<RobotInstance> robots, float yPosition)

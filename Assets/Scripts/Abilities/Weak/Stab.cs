@@ -14,7 +14,7 @@ public class Stab : AbilityData
         }
 
         // Damage
-        double damage = (5 + caster.abilitydamage) * (1 + caster.tempDamageMultiplier);
+        double damage = (5 + caster.battleStats.abilitydamage) * (1 + caster.tempDamageMultiplier);
         caster.tempDamageMultiplier = 0f;
 
         // Fire stabs

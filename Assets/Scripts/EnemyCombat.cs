@@ -1,12 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyCombat : UnitThinker
+public class EnemyCombat : UnitThinker, IBuffTarget
 {
-    public double health = 500;
-    public double maxHealth = 500;
-    public double attackDamage = 5;
-    public double attackSpeed = 1;
+    public CombatStats stats = new CombatStats();
     public HPBar hpBar;
+
+    public List<Buff> activeDebuffs = new List<Buff>();
 
     private BattleContext context;
 
@@ -14,16 +14,27 @@ public class EnemyCombat : UnitThinker
     {
         this.context = context;
 
-        thinkInterval = (float)(1.0 / attackSpeed);
+        // Enemy base stats should be set by enemy prefab or script
+        stats.health = stats.maxHealth;
+
+        thinkInterval = (float)(1.0 / stats.atkspd);
         thinkTimer = thinkInterval;
 
         GameObject barObj = GameObject.Instantiate(Resources.Load<GameObject>("HPBar"), transform);
         hpBar = barObj.GetComponent<HPBar>();
         barObj.transform.localPosition = new Vector3(0, 1.2f, 0);
 
-        health = maxHealth;
-
         UpdateHPBar();
+    }
+
+    protected override void Update()
+    {
+        foreach (var debuff in activeDebuffs)
+            debuff.Update(this, Time.deltaTime);
+
+        activeDebuffs.RemoveAll(d => d.ShouldRemove());
+
+        base.Update();
     }
 
     protected override void Think()
@@ -32,26 +43,42 @@ public class EnemyCombat : UnitThinker
             return;
 
         RobotCombat target = context.robots[Random.Range(0, context.robots.Count)];
-        target.TakeDamage(attackDamage);
+        target.TakeDamage(stats.atkdamage);
 
-        Debug.Log($"Enemy dealt {attackDamage} damage");
+        Debug.Log($"Enemy dealt {stats.atkdamage} damage");
     }
+
+    // -------------------------
+    // IBuffTarget Implementation
+    // -------------------------
+    public CombatStats GetStats() => stats;
 
     public void TakeDamage(double amount)
     {
-        health -= amount;
+        stats.health -= amount;
         UpdateHPBar();
 
-        if (health <= 0)
-        {
-            Debug.Log("Enemy died");
-            Destroy(gameObject);
-        }
+        if (stats.health <= 0)
+            Die();
+    }
+
+    public double GetCurrentHealth() => stats.health;
+
+    public void SetCurrentHealth(double value)
+    {
+        stats.health = value;
+        UpdateHPBar();
+    }
+
+    public void Die()
+    {
+        Debug.Log("Enemy died");
+        Destroy(gameObject);
     }
 
     private void UpdateHPBar()
     {
-        float normalized = (float)(health / maxHealth);
+        float normalized = (float)(stats.health / stats.maxHealth);
         hpBar.SetValue(normalized);
     }
 }

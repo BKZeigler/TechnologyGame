@@ -8,18 +8,24 @@ public class AtkSpdBuff : Buff
         stacks = 1;
     }
 
-    public override void OnFirstApply(RobotInstance robot)
+    public override void OnFirstApply(IBuffTarget target)
     {
         // First stack: +10%
-        robot.atkspd += 0.1f;
-        Debug.Log($"{robot.data.name} gains 1 stack of Attack Speed! Total atk spd: {robot.atkspd}");
+        if (target is RobotInstance robot)
+        {
+            robot.battleStats.atkspd += 0.1f;
+            Debug.Log($"{robot.data.name} gains 1 stack of Attack Speed! Total atk spd: {robot.battleStats.atkspd}");
+        }
     }
 
-    public override void OnStack(RobotInstance robot, int addedStacks)
+    public override void OnStack(IBuffTarget target, int addedStacks)
     {
         // Each additional stack: +10% per stack
-        robot.atkspd += 0.1f * addedStacks;
-        Debug.Log($"{robot.data.name} gains {addedStacks} more stack(s) of Attack Speed! Total atk spd: {robot.atkspd}");
+        if (target is RobotInstance robot)
+        {
+            robot.battleStats.atkspd += 0.1f * addedStacks;
+            Debug.Log($"{robot.data.name} gains {addedStacks} more stack(s) of Attack Speed! Total atk spd: {robot.battleStats.atkspd}");
+        }
     }
 
 }

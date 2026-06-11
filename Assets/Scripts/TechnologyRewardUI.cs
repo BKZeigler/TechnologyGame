@@ -183,13 +183,13 @@ public class TechnologyRewardUI : MonoBehaviour
 
         // Stats
         robotStatsText.text =
-            $"Health: {robot.health}\n" +
-            $"Damage: {robot.atkdamage}\n" +
-            $"Ability Damage: {robot.abilitydamage}\n" +
-            $"Attack Speed: {robot.atkspd}\n" +
-            $"Cast Speed: {robot.castspd}\n" +
-            $"Ability Count: {robot.abilityCount}\n" +
-            $"Luck: {robot.luck}";
+            $"Health: {robot.baseStats.health}\n" +
+            $"Damage: {robot.baseStats.atkdamage}\n" +
+            $"Ability Damage: {robot.baseStats.abilitydamage}\n" +
+            $"Attack Speed: {robot.baseStats.atkspd}\n" +
+            $"Cast Speed: {robot.baseStats.castspd}\n" +
+            $"Ability Count: {robot.baseStats.abilityCount}\n" +
+            $"Luck: {robot.baseStats.luck}";
 
         // Technologies
         robotTechListText.text = "Technologies:\n";

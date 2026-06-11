@@ -19,7 +19,7 @@ public class RobotCombat : UnitThinker
         this.instance = instance;
         this.Context = context;
 
-        thinkInterval = (float)(1.0 / instance.atkspd); // attack speed scaling
+        thinkInterval = (float)(1.0 / instance.battleStats.atkspd); // attack speed scaling
         thinkTimer = thinkInterval;
 
         // Spawn HP bar
@@ -39,26 +39,24 @@ public class RobotCombat : UnitThinker
 
         EnemyCombat enemy = Context.enemies[0]; // later: targeting rules
 
-        enemy.TakeDamage(instance.atkdamage);
+        enemy.TakeDamage(instance.battleStats.atkdamage);
         instance.TriggerOnBasicAttack(enemy);
-        Debug.Log($"Robot dealt {instance.atkdamage} damage");
+        Debug.Log($"Robot dealt {instance.battleStats.atkdamage} damage");
     }
 
     public void TakeDamage(double amount)
     {
-        instance.health -= amount;
-        UpdateHPBar();
-
-        if (instance.health <= 0)
-        {
-            Debug.Log("Robot died");
-            Destroy(gameObject);
-        }
+        instance.TakeDamage(amount);
     }
 
-    private void UpdateHPBar()
+    public void UpdateHPBar()
     {
-        float normalized = (float)(instance.health / instance.maxHealth);
+        float normalized = (float)(instance.battleStats.health / instance.battleStats.maxHealth);
         hpBar.SetValue(normalized);
+    }
+
+    public void Die()
+    {
+        instance.Die();
     }
 }

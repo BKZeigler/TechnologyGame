@@ -22,15 +22,16 @@ public class Robot : MonoBehaviour
     public void DisplayStats()
     {
         Debug.Log(instance == null ? "Instance is NULL" : "Instance OK");
+        Debug.Log(instance.baseStats == null ? "BaseStats is NULL" : "BaseStats OK");
         Debug.Log(instance.abilityDict == null ? "AbilityDict is NULL" : "AbilityDict OK");
 
-        Debug.Log($"Health: {instance.health}");
-        Debug.Log($"Attack Damage: {instance.atkdamage}");
-        Debug.Log($"Ability Damage: {instance.abilitydamage}");
-        Debug.Log($"Attack Speed: {instance.atkspd}");
-        Debug.Log($"Cast Speed: {instance.castspd}");
-        Debug.Log($"Ability Count: {instance.abilityCount}");
-        Debug.Log($"Luck: {instance.luck}");
+        Debug.Log($"Health: {instance.baseStats.health}");
+        Debug.Log($"Attack Damage: {instance.baseStats.atkdamage}");
+        Debug.Log($"Ability Damage: {instance.baseStats.abilitydamage}");
+        Debug.Log($"Attack Speed: {instance.baseStats.atkspd}");
+        Debug.Log($"Cast Speed: {instance.baseStats.castspd}");
+        Debug.Log($"Ability Count: {instance.baseStats.abilityCount}");
+        Debug.Log($"Luck: {instance.baseStats.luck}");
 
         Debug.Log("Abilities:");
         foreach (var ability in instance.abilityDict)

@@ -8,7 +8,7 @@ public abstract class Buff
     public float duration = -1f; // -1 means infinite duration
 
     // Called when applied
-    public virtual void Update(RobotInstance robot, float deltaTime)
+    public virtual void Update(IBuffTarget target, float deltaTime)
     {
         if (duration > 0)
         {
@@ -16,20 +16,20 @@ public abstract class Buff
         }
     }   
 
-    public virtual void OnFirstApply(RobotInstance robot) {}
+    public virtual void OnFirstApply(IBuffTarget target) {}
 
-    public virtual void OnBasicAttack(RobotInstance robot, EnemyCombat target) {}
+    public virtual void OnBasicAttack(IBuffTarget target, EnemyCombat enemy) {}
 
-    public virtual void OnStack(RobotInstance robot, int addedStacks) {}
+    public virtual void OnStack(IBuffTarget target, int addedStacks) {}
 
     // Called before an ability is executed
-    public virtual void OnBeforeAbility(RobotInstance robot, AbilityData ability) {}
+    public virtual void OnBeforeAbility(IBuffTarget target, AbilityData ability) {}
 
     // Called after an ability is executed
-    public virtual void OnAfterAbility(RobotInstance robot, AbilityData ability) {}
+    public virtual void OnAfterAbility(IBuffTarget target, AbilityData ability) {}
 
     // Called each turn or each cast cycle (optional)
-    public virtual void OnTick(RobotInstance robot) {}
+    public virtual void OnTick(IBuffTarget target) {}
 
     // Whether this buff should be removed
     public virtual bool ShouldRemove()

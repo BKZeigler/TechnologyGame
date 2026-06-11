@@ -9,19 +9,25 @@ public class LeechLockBuff : Buff
         duration = durationSeconds;
     }
 
-    public override void OnFirstApply(RobotInstance robot)
+    public override void OnFirstApply(IBuffTarget target)
     {
-        Debug.Log($"{robot.data.name} is empowered by Leech Lock for {duration} seconds!");
+        if (target is RobotInstance robot)
+        {
+            Debug.Log($"{robot.data.name} is empowered by Leech Lock for {duration} seconds!");
+        }
     }
 
-    public override void OnBasicAttack(RobotInstance robot, EnemyCombat target)
+    public override void OnBasicAttack(IBuffTarget target, EnemyCombat enemy)
     {
-        double healAmount = robot.abilitydamage;
+        if (target is RobotInstance robot)
+        {
+            double healAmount = robot.battleStats.abilitydamage;
 
         // any additions to multipliers to healing would go here
 
-        robot.health += healAmount;
-        Debug.Log($"{robot.data.name} heals for {healAmount} due to Leech Lock!");
+            robot.battleStats.health += healAmount;
+            Debug.Log($"{robot.data.name} heals for {healAmount} due to Leech Lock!");
+        }
     }
 
     public override bool ShouldRemove()
