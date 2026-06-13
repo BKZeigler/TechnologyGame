@@ -5,6 +5,7 @@ public class PrepareBuff : Buff
     public PrepareBuff()
     {
         buffName = "Prepare";
+        buffType = BuffType.Buff;
         stacks = 1;
     }
 

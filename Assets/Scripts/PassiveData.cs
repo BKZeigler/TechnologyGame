@@ -1,10 +1,13 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Combat/Passive")]
-public class PassiveData : ScriptableObject
+public abstract class PassiveData : ScriptableObject
 {
     public int id;
     public string passiveName;
-    [TextArea] public string description;
-    // Add fields like modifiers, triggers, etc.
+    public string description;
+    // Return false to block the buff
+    public virtual bool AllowBuff(RobotInstance robot, Buff buff)
+    {
+        return true;
+    }
 }

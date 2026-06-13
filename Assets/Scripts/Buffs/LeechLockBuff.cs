@@ -6,6 +6,7 @@ public class LeechLockBuff : Buff
     public LeechLockBuff(float durationSeconds)
     {
         buffName = "Leech Lock";
+        buffType = BuffType.Buff;
         duration = durationSeconds;
     }
 

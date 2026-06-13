@@ -7,6 +7,7 @@ public class BleedBuff : Buff
     public BleedBuff()
     {
         buffName = "Bleed";
+        buffType = BuffType.Debuff;
         stacks = 1;
         duration = -1f; // infinite until battle ends
     }

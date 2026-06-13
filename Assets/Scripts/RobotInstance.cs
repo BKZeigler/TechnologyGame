@@ -25,10 +25,13 @@ public class RobotInstance : IBuffTarget
     public Dictionary<int, AbilityData> abilityDict = new Dictionary<int, AbilityData>();
     public Dictionary<int, PassiveData> passiveDict = new Dictionary<int, PassiveData>();
     public List<int> technologyIDs = new List<int>();
+
     public List<Buff> activeBuffs = new List<Buff>();
+    public List<PassiveData> activePassives = new List<PassiveData>();
 
     // Runtime per-ability state (battle only)
     public Dictionary<int, int> abilityStacks = new Dictionary<int, int>();
+    public HashSet<int> disabledAbilities = new HashSet<int>();
 
     // -------------------------
     // Constructor
@@ -68,6 +71,12 @@ public class RobotInstance : IBuffTarget
         tempDamageMultiplier = 0f;
         activeBuffs.Clear();
         abilityStacks.Clear();
+        disabledAbilities.Clear();
+
+        // Activate passives for this battle
+        activePassives.Clear();
+        foreach (var p in passiveDict.Values)
+            activePassives.Add(p);
     }
 
     // -------------------------
@@ -164,6 +173,9 @@ public class RobotInstance : IBuffTarget
             int abilityId = keys[index];
             AbilityData ability = abilityDict[abilityId];
 
+            if (disabledAbilities.Contains(abilityId))
+                continue;
+
             TriggerBeforeAbility(ability);
             ability.Execute(this);
             TriggerAfterAbility(ability);
@@ -173,10 +185,21 @@ public class RobotInstance : IBuffTarget
     }
 
     // -------------------------
-    // Buff System
+    // Buff System (with passive filtering)
     // -------------------------
     public void AddBuff(Buff buff)
     {
+        // Passives can block or modify buff application
+        foreach (var passive in activePassives)
+        {
+            if (!passive.AllowBuff(this, buff))
+            {
+                Debug.Log($"{data.name}'s passive blocked {buff.buffName}!");
+                return;
+            }
+        }
+
+        // Normal stacking logic
         foreach (var b in activeBuffs)
         {
             if (b.GetType() == buff.GetType())

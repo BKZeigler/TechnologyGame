@@ -5,6 +5,7 @@ public class AtkSpdBuff : Buff
     public AtkSpdBuff()
     {
         buffName = "Attack Speed";
+        buffType = BuffType.Buff;
         stacks = 1;
     }
 

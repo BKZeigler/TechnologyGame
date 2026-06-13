@@ -3,6 +3,7 @@ using UnityEngine;
 public abstract class Buff
 {
     public string buffName;
+    public BuffType buffType = BuffType.Buff;
     public int stacks = 1;
 
     public float duration = -1f; // -1 means infinite duration

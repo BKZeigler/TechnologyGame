@@ -5,6 +5,7 @@ public class AbilityCountBuff : Buff
     public AbilityCountBuff()
     {
         buffName = "Ability Count";
+        buffType = BuffType.Buff;
         stacks = 1;
     }
 

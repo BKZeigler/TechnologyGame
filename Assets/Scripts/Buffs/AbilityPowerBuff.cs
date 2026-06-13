@@ -5,6 +5,7 @@ public class AbilityPowerBuff : Buff
     public AbilityPowerBuff()
     {
         buffName = "Ability Power";
+        buffType = BuffType.Buff;
         stacks = 1;
     }
 
