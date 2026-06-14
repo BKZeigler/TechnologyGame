@@ -20,6 +20,7 @@ public class RobotInstance : IBuffTarget
 
     public float tempDamageMultiplier = 0f;
     private int nextAbilityIndex = 0;
+    public int basicAttackCounter = 0;
 
     // Runtime abilities/passives/techs (IDs only)
     public Dictionary<int, AbilityData> abilityDict = new Dictionary<int, AbilityData>();
@@ -72,6 +73,7 @@ public class RobotInstance : IBuffTarget
         activeBuffs.Clear();
         abilityStacks.Clear();
         disabledAbilities.Clear();
+        basicAttackCounter = 0;
 
         // Activate passives for this battle
         activePassives.Clear();
@@ -238,8 +240,13 @@ public class RobotInstance : IBuffTarget
 
     public void TriggerOnBasicAttack(EnemyCombat target)
     {
+        // Buffs first
         foreach (var buff in activeBuffs)
             buff.OnBasicAttack(this, target);
+
+        // Passives second
+        foreach (var passive in activePassives)
+            passive.OnBasicAttack(this, target);
     }
 
     // -------------------------
