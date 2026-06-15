@@ -9,7 +9,7 @@ public class RobotCombat : UnitThinker
     protected override void Update()
     {
         // Tick buffs first
-        instance.UpdateBuffs(Time.deltaTime);
+        instance.UpdateCombatState(Time.deltaTime);
 
         // Then run the normal Think() timer
         base.Update();
@@ -38,6 +38,13 @@ public class RobotCombat : UnitThinker
             return;
 
         EnemyCombat enemy = Context.enemies[0]; // later: targeting rules
+
+        // Check passives before attacking
+        foreach (var passive in instance.activePassives)
+        {
+            if (!passive.AllowBasicAttack(instance))
+                return; // basic attack blocked
+        }
 
         enemy.TakeDamage(instance.battleStats.atkdamage);
         instance.TriggerOnBasicAttack(enemy);

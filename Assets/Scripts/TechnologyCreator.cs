@@ -119,24 +119,52 @@ public class TechnologyCreator : MonoBehaviour
     {
         var ids = new List<int>();
 
-        // For now, just give the BasicDamage ability if weakCount > 0
-        for (int i = 0; i < weakCount; i++)
-            ids.Add(1); // ID of BasicDamage
+        var adb = AbilityDatabase.Instance;
 
-        // TODO: pull from your tiered ability pools
-        // Example:
-        // ids.Add(AbilityPoolWeak.GetRandom().id);
+        for (int i = 0; i < weakCount; i++)
+            ids.Add(GetRandomAbility(adb.weakAbilities).id);
+
+        for (int i = 0; i < modCount; i++)
+            ids.Add(GetRandomAbility(adb.moderateAbilities).id);
+
+        for (int i = 0; i < strongCount; i++)
+            ids.Add(GetRandomAbility(adb.strongAbilities).id);
 
         return ids;
+    }
+
+    AbilityData GetRandomAbility(List<AbilityData> list)
+    {
+        if (list == null || list.Count == 0)
+            return null;
+
+        return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
     List<int> CreatePassiveIdList(int weakCount, int modCount, int strongCount)
     {
         var ids = new List<int>();
 
-        // TODO: pull from your tiered passive pools and then push their IDs
+        var pdb = PassiveDatabase.Instance;
+
+        for (int i = 0; i < weakCount; i++)
+            ids.Add(GetRandomPassive(pdb.weakPassives).id);
+
+        for (int i = 0; i < modCount; i++)
+            ids.Add(GetRandomPassive(pdb.moderatePassives).id);
+
+        for (int i = 0; i < strongCount; i++)
+            ids.Add(GetRandomPassive(pdb.strongPassives).id);
 
         return ids;
+    }
+
+    PassiveData GetRandomPassive(List<PassiveData> list)
+    {
+        if (list == null || list.Count == 0)
+            return null;
+
+        return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
     double RandomBasicPercent()

@@ -5,6 +5,7 @@ public abstract class AbilityData : ScriptableObject
     public int id;
     public string abilityName;
     public string description;
+    public TechTier tier;
 
     // Base scaling values
     public float baseDamage;

@@ -9,12 +9,37 @@ public class PassiveDatabase : ScriptableObject
     [SerializeField] private List<PassiveData> passives;
     private Dictionary<int, PassiveData> passiveById;
 
+    public List<PassiveData> weakPassives = new List<PassiveData>();
+    public List<PassiveData> moderatePassives = new List<PassiveData>();
+    public List<PassiveData> strongPassives = new List<PassiveData>();
+
     private void OnEnable()
     {
         Instance = this;
         passiveById = new Dictionary<int, PassiveData>();
+
         foreach (var passive in passives)
             passiveById[passive.id] = passive;
+
+        weakPassives.Clear();
+        moderatePassives.Clear();
+        strongPassives.Clear();
+
+        foreach (var passive in passives)
+        {
+            switch (passive.tier)
+            {
+                case TechTier.Weak:
+                    weakPassives.Add(passive);
+                    break;
+                case TechTier.Moderate:
+                    moderatePassives.Add(passive);
+                    break;
+                case TechTier.Strong:
+                    strongPassives.Add(passive);
+                    break;
+            }
+        }
     }
 
     public static PassiveData GetPassive(int id)

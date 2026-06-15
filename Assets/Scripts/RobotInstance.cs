@@ -178,12 +178,69 @@ public class RobotInstance : IBuffTarget
             if (disabledAbilities.Contains(abilityId))
                 continue;
 
+            // Check passives before casting
+            bool allowed = true;
+            foreach (var passive in activePassives)
+            {
+                if (!passive.AllowAbilityCast(this, ability))
+                {
+                    allowed = false;
+                    break;
+                }
+            }
+
+            if (!allowed)
+                continue;
+
             TriggerBeforeAbility(ability);
             ability.Execute(this);
             TriggerAfterAbility(ability);
+
+            foreach (var passive in activePassives)
+                passive.OnAbilityCast(this, ability);
         }
 
         nextAbilityIndex = (nextAbilityIndex + count) % keys.Count;
+    }
+
+    public void CastNextSingleAbility() // used by passives (Ex: Momentum)
+    {
+        if (abilityDict.Count == 0)
+            return;
+
+        var keys = new List<int>(abilityDict.Keys);
+
+        int abilityId = keys[nextAbilityIndex];
+        AbilityData ability = abilityDict[abilityId];
+
+        // Skip disabled abilities
+        if (disabledAbilities.Contains(abilityId))
+        {
+            nextAbilityIndex = (nextAbilityIndex + 1) % keys.Count;
+            return;
+        }
+
+        // Check passives
+        foreach (var passive in activePassives)
+        {
+            if (!passive.AllowAbilityCast(this, ability))
+            {
+                nextAbilityIndex = (nextAbilityIndex + 1) % keys.Count;
+                return;
+            }
+        }
+
+        // Execute ability
+        TriggerBeforeAbility(ability);
+        ability.Execute(this);
+        TriggerAfterAbility(ability);
+
+        // Notify passives
+        foreach (var passive in activePassives)
+            passive.OnAbilityCast(this, ability);
+
+        // Advance rotation by 1
+        nextAbilityIndex = (nextAbilityIndex + 1) % keys.Count;
     }
 
     // -------------------------
@@ -230,12 +287,17 @@ public class RobotInstance : IBuffTarget
         activeBuffs.RemoveAll(b => b.ShouldRemove());
     }
 
-    public void UpdateBuffs(float deltaTime)
+    public void UpdateCombatState(float deltaTime)
     {
+        // Tick buffs
         foreach (var buff in activeBuffs)
             buff.Update(this, deltaTime);
 
         activeBuffs.RemoveAll(b => b.ShouldRemove());
+
+        // Tick passives
+        foreach (var passive in activePassives)
+            passive.OnUpdate(this, deltaTime);
     }
 
     public void TriggerOnBasicAttack(EnemyCombat target)
@@ -259,6 +321,10 @@ public class RobotInstance : IBuffTarget
         battleStats.health -= amount;
         combat?.UpdateHPBar();
 
+        // Notify passives
+        foreach (var passive in activePassives)
+            passive.OnDamageTaken(this, amount);
+
         if (battleStats.health <= 0)
             combat?.Die();
     }
@@ -267,8 +333,16 @@ public class RobotInstance : IBuffTarget
 
     public void SetCurrentHealth(double value)
     {
+        double oldHP = battleStats.health;
         battleStats.health = value;
         combat?.UpdateHPBar();
+
+        if (value > oldHP)
+        {
+            double healed = value - oldHP;
+            foreach (var passive in activePassives)
+                passive.OnHeal(this, healed);
+        }
     }
 
     public void Die()

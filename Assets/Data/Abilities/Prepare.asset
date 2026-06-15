@@ -15,6 +15,7 @@ MonoBehaviour:
   id: 3
   abilityName: Prepare
   description: Increase the damage of your next ability casted by 25%
+  tier: 1
   baseDamage: 0
   apScaling: 0
   luckScaling: 0

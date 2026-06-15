@@ -8,6 +8,9 @@ public class AbilityDatabase : ScriptableObject
 
     [SerializeField] private List<AbilityData> abilities;
     private Dictionary<int, AbilityData> abilityById;
+    public List<AbilityData> weakAbilities = new List<AbilityData>();
+    public List<AbilityData> moderateAbilities = new List<AbilityData>();
+    public List<AbilityData> strongAbilities = new List<AbilityData>();
 
     private void OnEnable()
     {
@@ -15,6 +18,26 @@ public class AbilityDatabase : ScriptableObject
         abilityById = new Dictionary<int, AbilityData>();
         foreach (var ability in abilities)
             abilityById[ability.id] = ability;
+
+        weakAbilities.Clear();
+        moderateAbilities.Clear();
+        strongAbilities.Clear();
+
+        foreach (var ability in abilities)
+        {
+            switch (ability.tier)
+            {
+                case TechTier.Weak:
+                    weakAbilities.Add(ability);
+                    break;
+                case TechTier.Moderate:
+                    moderateAbilities.Add(ability);
+                    break;
+                case TechTier.Strong:
+                    strongAbilities.Add(ability);
+                    break;
+            }
+        }
     }
 
     public static AbilityData GetAbility(int id)

@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87e9be446f946c840b7e9d8290a8478f, type: 3}
-  m_Name: Leech Lock
-  m_EditorClassIdentifier: Assembly-CSharp::LeechLockAbility
-  id: 6
-  abilityName: Leech Lock
+  m_Script: {fileID: 11500000, guid: 078bec2e695259d4383d85b8aadd2d81, type: 3}
+  m_Name: Pain Sponge
+  m_EditorClassIdentifier: Assembly-CSharp::PainSpongePassive
+  id: 5
+  passiveName: Pain Sponge
   description: 
-  tier: 1
-  baseDamage: 0
-  apScaling: 0
-  luckScaling: 0
+  tier: 2

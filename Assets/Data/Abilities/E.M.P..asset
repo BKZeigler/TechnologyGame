@@ -15,6 +15,7 @@ MonoBehaviour:
   id: 12
   abilityName: E.M.P.
   description: 
+  tier: 1
   baseDamage: 0
   apScaling: 0
   luckScaling: 0

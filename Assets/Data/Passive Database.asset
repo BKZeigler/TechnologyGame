@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d8e132f5ebea5b4c8cac13d3fc1a10e, type: 3}
+  m_Name: Passive Database
+  m_EditorClassIdentifier: Assembly-CSharp::PassiveDatabase
+  passives:
+  - {fileID: 11400000, guid: 988f77cdaf3e5a24e903a27bf442a4ab, type: 2}
+  - {fileID: 11400000, guid: 556d4ccd19190c740a6025445fec5bbc, type: 2}
+  - {fileID: 11400000, guid: f31e360be64a92d4f880016f4347b49b, type: 2}
+  - {fileID: 11400000, guid: bdaf89279ce20e94890b001da365ac92, type: 2}
+  - {fileID: 11400000, guid: 684e54b5c182fa7408f04af253b30217, type: 2}
+  - {fileID: 11400000, guid: f0a3fff2d23f4df4f84bdf5a890d038b, type: 2}
+  - {fileID: 11400000, guid: 547d86ed215de234c9a2f91c07c5d80a, type: 2}
+  - {fileID: 11400000, guid: e5d628e28230bc2469fa1052d73cf2bc, type: 2}
+  - {fileID: 11400000, guid: f9d15c018b04f154a8d914333ce6bfd9, type: 2}

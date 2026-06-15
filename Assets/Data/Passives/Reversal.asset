@@ -9,13 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87e9be446f946c840b7e9d8290a8478f, type: 3}
-  m_Name: Leech Lock
-  m_EditorClassIdentifier: Assembly-CSharp::LeechLockAbility
-  id: 6
-  abilityName: Leech Lock
+  m_Script: {fileID: 11500000, guid: d1baa41e164178e48afff8d7506f0811, type: 3}
+  m_Name: Reversal
+  m_EditorClassIdentifier: Assembly-CSharp::ReversalPassive
+  id: 4
+  passiveName: Reversal
   description: 
   tier: 1
-  baseDamage: 0
-  apScaling: 0
-  luckScaling: 0

@@ -9,13 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87e9be446f946c840b7e9d8290a8478f, type: 3}
-  m_Name: Leech Lock
-  m_EditorClassIdentifier: Assembly-CSharp::LeechLockAbility
+  m_Script: {fileID: 11500000, guid: 578c2022de488dd428d4ac7918fc1830, type: 3}
+  m_Name: Ability Master
+  m_EditorClassIdentifier: Assembly-CSharp::AbilityMasterPassive
   id: 6
-  abilityName: Leech Lock
+  passiveName: Ability Master
   description: 
-  tier: 1
-  baseDamage: 0
-  apScaling: 0
-  luckScaling: 0
