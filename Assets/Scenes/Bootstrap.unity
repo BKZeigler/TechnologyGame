@@ -616,6 +616,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
   robots: []
+  globalCastSpeedMultiplier: 1
 --- !u!1 &1596316495
 GameObject:
   m_ObjectHideFlags: 0

@@ -104,6 +104,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 793385626a2a9af40bdc90d7f2846b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCombat
-  health: 100
-  attackDamage: 5
-  attackSpeed: 1
+  stats:
+    health: 500
+    maxHealth: 500
+    atkdamage: 0
+    abilitydamage: 0
+    abilityCount: 0
+    atkspd: 0
+    castspd: 0
+    luck: 0
+  hpBar: {fileID: 0}

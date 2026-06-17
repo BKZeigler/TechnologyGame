@@ -14,6 +14,7 @@ public class BleedBuff : Buff
 
     public override void Update(IBuffTarget target, float deltaTime)
     {
+        Debug.Log($"Enemy received debuff: {buffName}, stacks={stacks}");
         base.Update(target, deltaTime);
 
         tickTimer += deltaTime;

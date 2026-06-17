@@ -21,6 +21,10 @@ public class BattleSceneManager : MonoBehaviour
         foreach (var robot in robotInstances)
             robot.InitializeBattleStats();
 
+        //Trigger passives' OnBattleStart
+        foreach (var robot in robotInstances)
+            robot.TriggerOnBattleStart();
+
         SpawnRobots(robotInstances, bottomY);
         SpawnEnemies(enemyPrefabs, topY);
     }

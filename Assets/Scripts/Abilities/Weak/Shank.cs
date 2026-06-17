@@ -30,7 +30,7 @@ public class ShankAbility : AbilityData
 
         if (!found)
         {
-            target.activeDebuffs.Add(new BleedBuff());
+            target.AddBuff(new BleedBuff());
             Debug.Log($"{caster.data.robotName} applies Bleed to {target.name}!");
         }
     }

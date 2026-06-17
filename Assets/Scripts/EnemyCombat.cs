@@ -81,4 +81,21 @@ public class EnemyCombat : UnitThinker, IBuffTarget
         float normalized = (float)(stats.health / stats.maxHealth);
         hpBar.SetValue(normalized);
     }
+
+    public void AddBuff(Buff buff)
+    {
+        // Normal stacking logic
+        foreach (var b in activeDebuffs)
+        {
+            if (b.GetType() == buff.GetType())
+            {
+                b.stacks += buff.stacks;
+                b.OnStack(this, buff.stacks);
+                return;
+            }
+        }
+
+        activeDebuffs.Add(buff);
+        buff.OnFirstApply(this);
+    }
 }

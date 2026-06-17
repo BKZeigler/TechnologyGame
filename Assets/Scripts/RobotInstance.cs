@@ -359,4 +359,10 @@ public class RobotInstance : IBuffTarget
         tempDamageMultiplier = 0f;
         InitializeBattleStats();
     }
+
+    public void TriggerOnBattleStart()
+    {
+        foreach (var passive in activePassives)
+            passive.OnBattleStart(this);
+    }
 }
