@@ -12,6 +12,12 @@ public class AbilityDatabase : ScriptableObject
     public List<AbilityData> moderateAbilities = new List<AbilityData>();
     public List<AbilityData> strongAbilities = new List<AbilityData>();
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Init()
+    {
+        // Force Unity to load the asset from Resources
+        Resources.Load<AbilityDatabase>("Ability Database");
+    }
     private void OnEnable()
     {
         Instance = this;
@@ -25,6 +31,15 @@ public class AbilityDatabase : ScriptableObject
 
         foreach (var ability in abilities)
         {
+            Debug.Log("Ability Database starting");
+            if (weakAbilities.Count == 0)
+            Debug.LogWarning("AbilityDatabase: No WEAK abilities found!");
+
+            if (moderateAbilities.Count == 0)
+            Debug.LogWarning("AbilityDatabase: No MODERATE abilities found!");
+
+            if (strongAbilities.Count == 0)
+            Debug.LogWarning("AbilityDatabase: No STRONG abilities found!");
             switch (ability.tier)
             {
                 case TechTier.Weak:

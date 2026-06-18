@@ -13,6 +13,12 @@ public class PassiveDatabase : ScriptableObject
     public List<PassiveData> moderatePassives = new List<PassiveData>();
     public List<PassiveData> strongPassives = new List<PassiveData>();
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Init()
+    {
+        // Force Unity to load the asset from Resources
+        Resources.Load<PassiveDatabase>("Passive Database");
+    }
     private void OnEnable()
     {
         Instance = this;
@@ -27,6 +33,15 @@ public class PassiveDatabase : ScriptableObject
 
         foreach (var passive in passives)
         {
+            Debug.Log("Passive Database starting");
+            if (weakPassives.Count == 0)
+            Debug.LogWarning("AbilityDatabase: No WEAK abilities found!");
+
+            if (moderatePassives.Count == 0)
+            Debug.LogWarning("AbilityDatabase: No MODERATE abilities found!");
+
+            if (strongPassives.Count == 0)
+            Debug.LogWarning("AbilityDatabase: No STRONG abilities found!");
             switch (passive.tier)
             {
                 case TechTier.Weak:
