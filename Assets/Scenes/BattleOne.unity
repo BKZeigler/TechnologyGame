@@ -332,7 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAbilityPrompter
   castSpeed: 0.5
-  robotsPerPrompt: 3
+  robotsPerPrompt: 1
 --- !u!4 &1046821531
 Transform:
   m_ObjectHideFlags: 0

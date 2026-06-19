@@ -46,6 +46,7 @@ public class EnemyCombat : UnitThinker, IBuffTarget
         target.TakeDamage(stats.atkdamage);
 
         Debug.Log($"Enemy dealt {stats.atkdamage} damage");
+        Debug.Log("Current active debuffs: " + activeDebuffs.Count);
     }
 
     // -------------------------
@@ -85,15 +86,15 @@ public class EnemyCombat : UnitThinker, IBuffTarget
     public void AddBuff(Buff buff)
     {
         // Normal stacking logic
-        foreach (var b in activeDebuffs)
-        {
-            if (b.GetType() == buff.GetType())
-            {
-                b.stacks += buff.stacks;
-                b.OnStack(this, buff.stacks);
-                return;
-            }
-        }
+        //foreach (var b in activeDebuffs)
+        //{
+            //if (b.GetType() == buff.GetType())
+            //{
+                //b.stacks += buff.stacks;
+                //b.OnStack(this, buff.stacks);
+                //return;
+            //}
+        //}
 
         activeDebuffs.Add(buff);
         buff.OnFirstApply(this);

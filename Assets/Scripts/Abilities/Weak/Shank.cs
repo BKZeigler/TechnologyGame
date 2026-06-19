@@ -5,6 +5,7 @@ public class ShankAbility : AbilityData
 {
     public override void Execute(RobotInstance caster)
     {
+        Debug.Log($"SHANK EXECUTED by {caster.data.robotName} at time {Time.time}");
         var context = caster.combat.Context;
 
         if (context.enemies.Count == 0)
@@ -16,22 +17,18 @@ public class ShankAbility : AbilityData
         EnemyCombat target = context.enemies[Random.Range(0, context.enemies.Count)];
 
         // Apply bleed
-        bool found = false;
         foreach (var debuff in target.activeDebuffs)
         {
             if (debuff is BleedBuff bleed)
             {
-                bleed.stacks += 1;
                 bleed.OnStack(target, 1);
-                found = true;
-                break;
+                return;
             }
         }
 
-        if (!found)
-        {
-            target.AddBuff(new BleedBuff());
-            Debug.Log($"{caster.data.robotName} applies Bleed to {target.name}!");
-        }
+        Debug.Log("No existing bleed found, applying new one.");
+        var newBleed = new BleedBuff();
+        target.AddBuff(newBleed);
+        Debug.Log($"{caster.data.robotName} applies Bleed to {target.name}!");
     }
 }

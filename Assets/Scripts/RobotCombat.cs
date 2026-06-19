@@ -48,7 +48,7 @@ public class RobotCombat : UnitThinker
 
         enemy.TakeDamage(instance.battleStats.atkdamage);
         instance.TriggerOnBasicAttack(enemy);
-        Debug.Log($"Robot dealt {instance.battleStats.atkdamage} damage");
+        Debug.Log($"{instance.data.name}Robot dealt {instance.battleStats.atkdamage} damage");
     }
 
     public void TakeDamage(double amount)

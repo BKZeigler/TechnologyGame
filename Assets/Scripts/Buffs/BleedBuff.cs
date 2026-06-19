@@ -14,10 +14,11 @@ public class BleedBuff : Buff
 
     public override void Update(IBuffTarget target, float deltaTime)
     {
-        Debug.Log($"Enemy received debuff: {buffName}, stacks={stacks}");
+        //Debug.Log($"Enemy received debuff: {buffName}, stacks={stacks}");
         base.Update(target, deltaTime);
 
         tickTimer += deltaTime;
+        //Debug.Log("Bleed tick timer: " + tickTimer);
 
         if (tickTimer >= 1f) // 1 second tick
         {
@@ -32,6 +33,7 @@ public class BleedBuff : Buff
 
     public override void OnStack(IBuffTarget target, int addedStacks)
     {
+        stacks += addedStacks;
         Debug.Log($"{buffName} stacked to {stacks}!");
     }
 }

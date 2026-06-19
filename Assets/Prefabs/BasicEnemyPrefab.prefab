@@ -107,10 +107,10 @@ MonoBehaviour:
   stats:
     health: 500
     maxHealth: 500
-    atkdamage: 0
+    atkdamage: 1
     abilitydamage: 0
     abilityCount: 0
-    atkspd: 0
+    atkspd: 1
     castspd: 0
     luck: 0
   hpBar: {fileID: 0}

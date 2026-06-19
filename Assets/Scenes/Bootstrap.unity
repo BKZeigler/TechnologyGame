@@ -238,6 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunBootstrapper
   basicRobotData: {fileID: 11400000, guid: 2e6a9c9f6e2c06c458e9f95a56b2cac9, type: 2}
+  newNameRobotData: {fileID: 11400000, guid: 7c170f5761ed2274694137791c189461, type: 2}
 --- !u!4 &243065223
 Transform:
   m_ObjectHideFlags: 0

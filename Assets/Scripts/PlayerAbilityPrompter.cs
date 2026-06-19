@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerAbilityPrompter : MonoBehaviour
+public class PlayerAbilityPrompter : MonoBehaviour // currently exists in battle scene, maybe should be bootstrapped
 {
     public float castSpeed = 0.5f;
-    public int robotsPerPrompt = 3;
+    public int robotsPerPrompt = 3; // set in the inspector
 
     private float timer = 0f;
     private int nextRobotIndex = 0;
