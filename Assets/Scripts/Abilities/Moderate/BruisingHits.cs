@@ -16,6 +16,7 @@ public class BruisingHitsAbility : AbilityData
 
         // Calculate damage per hit
         double damage = (4 + caster.battleStats.abilitydamage) * (1 + caster.tempDamageMultiplier);
+        caster.tempDamageMultiplier = 0f;
 
         var context = caster.combat.Context;
 

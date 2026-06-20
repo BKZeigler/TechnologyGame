@@ -45,8 +45,8 @@ public class EnemyCombat : UnitThinker, IBuffTarget
         RobotCombat target = context.robots[Random.Range(0, context.robots.Count)];
         target.TakeDamage(stats.atkdamage);
 
-        Debug.Log($"Enemy dealt {stats.atkdamage} damage");
-        Debug.Log("Current active debuffs: " + activeDebuffs.Count);
+        //Debug.Log($"Enemy dealt {stats.atkdamage} damage");
+        //Debug.Log("Current active debuffs: " + activeDebuffs.Count);
     }
 
     // -------------------------

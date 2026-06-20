@@ -23,7 +23,7 @@ public class Robot : MonoBehaviour
     {
         Debug.Log(instance == null ? "Instance is NULL" : "Instance OK");
         Debug.Log(instance.baseStats == null ? "BaseStats is NULL" : "BaseStats OK");
-        Debug.Log(instance.abilityDict == null ? "AbilityDict is NULL" : "AbilityDict OK");
+        //Debug.Log(instance.abilityDict == null ? "AbilityDict is NULL" : "AbilityDict OK");
 
         Debug.Log($"Health: {instance.baseStats.health}");
         Debug.Log($"Attack Damage: {instance.baseStats.atkdamage}");
@@ -34,8 +34,8 @@ public class Robot : MonoBehaviour
         Debug.Log($"Luck: {instance.baseStats.luck}");
 
         Debug.Log("Abilities:");
-        foreach (var ability in instance.abilityDict)
-            Debug.Log($"Ability ID: {ability.Key}, Ability Name: {ability.Value.name}");
+        //foreach (var ability in instance.abilityDict)
+        //    Debug.Log($"Ability ID: {ability.Key}, Ability Name: {ability.Value.name}");
 
         Debug.Log("Passives:");
         foreach (var passive in instance.passiveDict)

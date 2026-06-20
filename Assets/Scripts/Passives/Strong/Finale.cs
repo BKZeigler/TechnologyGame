@@ -39,7 +39,7 @@ public class FinalePassive : PassiveData
 
         isTriggeringFinale = true;
 
-        foreach (var ability in robot.abilityDict.Values)
+        foreach (var ability in robot.abilities)
         {
             ability.Execute(robot);
         }

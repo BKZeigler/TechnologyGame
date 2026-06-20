@@ -11,6 +11,9 @@ public class RobotCombat : UnitThinker
         // Tick buffs first
         instance.UpdateCombatState(Time.deltaTime);
 
+        // Recalculate attack interval dynamically
+        thinkInterval = (float)(1.0 / instance.battleStats.atkspd);
+
         // Then run the normal Think() timer
         base.Update();
     }

@@ -9,6 +9,7 @@ public class EMPAbility : AbilityData
 
         // Calculate damage
         double damage = 3 * caster.battleStats.abilitydamage * (1 + caster.tempDamageMultiplier);
+        caster.tempDamageMultiplier = 0f;
 
         // Deal AOE damage to all enemies
         foreach (var enemy in context.enemies)

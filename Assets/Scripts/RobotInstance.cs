@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using System;
 
 [System.Serializable]
@@ -22,13 +23,18 @@ public class RobotInstance : IBuffTarget
     private int nextAbilityIndex = 0;
     public int basicAttackCounter = 0;
 
-    // Runtime abilities/passives/techs (IDs only)
-    public Dictionary<int, AbilityData> abilityDict = new Dictionary<int, AbilityData>();
+    // -------------------------
+    // Abilities & Passives (DUPLICATES ALLOWED)
+    // -------------------------
+    public List<AbilityData> abilities = new List<AbilityData>();   // <--- NEW
     public Dictionary<int, PassiveData> passiveDict = new Dictionary<int, PassiveData>();
+    public List<PassiveData> activePassives = new List<PassiveData>();
+
+    // Techs
     public List<int> technologyIDs = new List<int>();
 
+    // Buffs
     public List<Buff> activeBuffs = new List<Buff>();
-    public List<PassiveData> activePassives = new List<PassiveData>();
 
     // Runtime per-ability state (battle only)
     public Dictionary<int, int> abilityStacks = new Dictionary<int, int>();
@@ -51,13 +57,13 @@ public class RobotInstance : IBuffTarget
         baseStats.castspd       = data.baseCastSpeed;
         baseStats.luck          = data.baseLuck;
 
-        // Initialize battle stats
         InitializeBattleStats();
 
-        // Load base abilities/passives
+        // Load base abilities (DUPLICATES ALLOWED)
         foreach (int id in data.baseAbilityIDs)
-            abilityDict[id] = AbilityDatabase.GetAbility(id);
+            abilities.Add(AbilityDatabase.GetAbility(id));
 
+        // Load base passives
         foreach (int id in data.basePassiveIDs)
             passiveDict[id] = PassiveDatabase.GetPassive(id);
     }
@@ -75,7 +81,7 @@ public class RobotInstance : IBuffTarget
         disabledAbilities.Clear();
         basicAttackCounter = 0;
 
-        // Activate passives for this battle
+        // Activate passives
         activePassives.Clear();
         foreach (var p in passiveDict.Values)
             activePassives.Add(p);
@@ -99,9 +105,11 @@ public class RobotInstance : IBuffTarget
 
         InitializeBattleStats();
 
+        // Add abilities (DUPLICATES ALLOWED)
         foreach (int id in tech.abilityIDs)
-            abilityDict[id] = AbilityDatabase.GetAbility(id);
+            abilities.Add(AbilityDatabase.GetAbility(id));
 
+        // Add passives
         foreach (int passiveId in tech.passiveIDs)
             passiveDict[passiveId] = PassiveDatabase.GetPassive(passiveId);
     }
@@ -123,8 +131,9 @@ public class RobotInstance : IBuffTarget
             castspd       = baseStats.castspd,
             luck          = baseStats.luck,
 
-            abilityIDs    = new List<int>(abilityDict.Keys),
-            passiveIDs    = new List<int>(passiveDict.Keys),
+            // Save duplicates
+            abilityIDs    = abilities.Select(a => a.id).ToList(),
+            passiveIDs    = passiveDict.Keys.ToList(),
             technologyIDs = new List<int>(technologyIDs)
         };
     }
@@ -145,10 +154,12 @@ public class RobotInstance : IBuffTarget
 
         instance.InitializeBattleStats();
 
-        instance.abilityDict.Clear();
+        // Load abilities (DUPLICATES ALLOWED)
+        instance.abilities.Clear();
         foreach (int id in save.abilityIDs)
-            instance.abilityDict[id] = AbilityDatabase.GetAbility(id);
+            instance.abilities.Add(AbilityDatabase.GetAbility(id));
 
+        // Load passives
         instance.passiveDict.Clear();
         foreach (int id in save.passiveIDs)
             instance.passiveDict[id] = PassiveDatabase.GetPassive(id);
@@ -159,26 +170,24 @@ public class RobotInstance : IBuffTarget
     }
 
     // -------------------------
-    // Ability Casting
+    // Ability Casting (DUPLICATE SAFE)
     // -------------------------
     public void CastNextAbilities()
     {
-        int count = (int)Math.Floor(battleStats.abilityCount);
-        if (count <= 0 || abilityDict.Count == 0)
+        int count = Mathf.FloorToInt((float)battleStats.abilityCount);
+        if (count <= 0 || abilities.Count == 0)
             return;
-
-        var keys = new List<int>(abilityDict.Keys);
 
         for (int i = 0; i < count; i++)
         {
-            int index = (nextAbilityIndex + i) % keys.Count;
-            int abilityId = keys[index];
-            AbilityData ability = abilityDict[abilityId];
+            int index = (nextAbilityIndex + i) % abilities.Count;
+            AbilityData ability = abilities[index];
 
-            if (disabledAbilities.Contains(abilityId))
+            // Skip disabled abilities
+            if (disabledAbilities.Contains(ability.id))
                 continue;
 
-            // Check passives before casting
+            // Check passives
             bool allowed = true;
             foreach (var passive in activePassives)
             {
@@ -200,65 +209,52 @@ public class RobotInstance : IBuffTarget
                 passive.OnAbilityCast(this, ability);
         }
 
-        nextAbilityIndex = (nextAbilityIndex + count) % keys.Count;
+        nextAbilityIndex = (nextAbilityIndex + count) % abilities.Count;
     }
 
-    public void CastNextSingleAbility() // used by passives (Ex: Momentum)
+    public void CastNextSingleAbility()
     {
-        if (abilityDict.Count == 0)
+        if (abilities.Count == 0)
             return;
 
-        var keys = new List<int>(abilityDict.Keys);
+        AbilityData ability = abilities[nextAbilityIndex];
 
-        int abilityId = keys[nextAbilityIndex];
-        AbilityData ability = abilityDict[abilityId];
-
-        // Skip disabled abilities
-        if (disabledAbilities.Contains(abilityId))
+        if (disabledAbilities.Contains(ability.id))
         {
-            nextAbilityIndex = (nextAbilityIndex + 1) % keys.Count;
+            nextAbilityIndex = (nextAbilityIndex + 1) % abilities.Count;
             return;
         }
 
-        // Check passives
         foreach (var passive in activePassives)
         {
             if (!passive.AllowAbilityCast(this, ability))
             {
-                nextAbilityIndex = (nextAbilityIndex + 1) % keys.Count;
+                nextAbilityIndex = (nextAbilityIndex + 1) % abilities.Count;
                 return;
             }
         }
 
-        // Execute ability
         TriggerBeforeAbility(ability);
         ability.Execute(this);
         TriggerAfterAbility(ability);
 
-        // Notify passives
         foreach (var passive in activePassives)
             passive.OnAbilityCast(this, ability);
 
-        // Advance rotation by 1
-        nextAbilityIndex = (nextAbilityIndex + 1) % keys.Count;
+        nextAbilityIndex = (nextAbilityIndex + 1) % abilities.Count;
     }
 
     // -------------------------
-    // Buff System (with passive filtering)
+    // Buff System
     // -------------------------
     public void AddBuff(Buff buff)
     {
-        // Passives can block or modify buff application
         foreach (var passive in activePassives)
         {
             if (!passive.AllowBuff(this, buff))
-            {
-                Debug.Log($"{data.name}'s passive blocked {buff.buffName}!");
                 return;
-            }
         }
 
-        // Normal stacking logic
         foreach (var b in activeBuffs)
         {
             if (b.GetType() == buff.GetType())
@@ -289,24 +285,20 @@ public class RobotInstance : IBuffTarget
 
     public void UpdateCombatState(float deltaTime)
     {
-        // Tick buffs
         foreach (var buff in activeBuffs)
             buff.Update(this, deltaTime);
 
         activeBuffs.RemoveAll(b => b.ShouldRemove());
 
-        // Tick passives
         foreach (var passive in activePassives)
             passive.OnUpdate(this, deltaTime);
     }
 
     public void TriggerOnBasicAttack(EnemyCombat target)
     {
-        // Buffs first
         foreach (var buff in activeBuffs)
             buff.OnBasicAttack(this, target);
 
-        // Passives second
         foreach (var passive in activePassives)
             passive.OnBasicAttack(this, target);
     }
@@ -321,7 +313,6 @@ public class RobotInstance : IBuffTarget
         battleStats.health -= amount;
         combat?.UpdateHPBar();
 
-        // Notify passives
         foreach (var passive in activePassives)
             passive.OnDamageTaken(this, amount);
 

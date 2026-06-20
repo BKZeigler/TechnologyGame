@@ -22,6 +22,8 @@ public class Stab : AbilityData
 
         target.TakeDamage(damage);
 
+        Debug.Log($"{caster.data.name} used {abilityName}, dealing {damage} damage.");
+
 
     }
 }
