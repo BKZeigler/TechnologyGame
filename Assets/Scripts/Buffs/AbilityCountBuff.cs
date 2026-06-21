@@ -24,7 +24,7 @@ public class AbilityCountBuff : Buff
         // Each additional stack: +1 per stack
         if (target is RobotInstance robot)
         {
-            robot.battleStats.abilityCount += 1 + addedStacks;
+            robot.battleStats.abilityCount += addedStacks;
             Debug.Log($"{robot.data.name} gains {addedStacks} more stack(s) of Ability Count! Total ability count: {robot.battleStats.abilityCount}");
         }
     }
