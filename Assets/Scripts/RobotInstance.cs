@@ -225,14 +225,14 @@ public class RobotInstance : IBuffTarget
             return;
         }
 
-        foreach (var passive in activePassives)
-        {
-            if (!passive.AllowAbilityCast(this, ability))
-            {
-                nextAbilityIndex = (nextAbilityIndex + 1) % abilities.Count;
-                return;
-            }
-        }
+        //foreach (var passive in activePassives)   manual prompting should not be affected by disabled auto prompting
+        //{
+        //    if (!passive.AllowAbilityCast(this, ability))
+        //    {
+        //        nextAbilityIndex = (nextAbilityIndex + 1) % abilities.Count;
+        //        return;
+        //    }
+        //}
 
         TriggerBeforeAbility(ability);
         ability.Execute(this);
