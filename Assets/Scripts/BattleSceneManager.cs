@@ -39,6 +39,8 @@ public class BattleSceneManager : MonoBehaviour
         PlayerManager.Instance.ResetGlobalBuffs();
         foreach (var enemy in context.enemies)
             enemy.activeDebuffs.Clear();
+
+        OnBattleWon();
     }
 
     void SpawnRobots(List<RobotInstance> robots, float yPosition)
@@ -87,4 +89,15 @@ public class BattleSceneManager : MonoBehaviour
             context.enemies.Add(combat);
         }
     }
+
+    void OnBattleWon()
+    {
+        var generator = FindFirstObjectByType<BattleRewardGenerator>();
+        var rewards = generator.GenerateRewards();
+
+        GameObject popupPrefab = Resources.Load<GameObject>("RewardPopup");
+        GameObject popup = Instantiate(popupPrefab);
+
+        popup.GetComponent<RewardPopup>().Show(rewards);
+    }    
 }

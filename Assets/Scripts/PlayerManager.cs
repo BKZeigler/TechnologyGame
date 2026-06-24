@@ -68,6 +68,16 @@ public class PlayerManager : MonoBehaviour
         foreach (var tech in techManager.GetAllTechnologies())
             save.technologies.Add(tech.ToSaveData());
 
+        // Resources
+        save.resourceNames = new List<string>();
+        save.resourceAmounts = new List<int>();
+
+        foreach (var kvp in ResourceInventory.Instance.resources)
+        {
+            save.resourceNames.Add(kvp.Key.name);
+            save.resourceAmounts.Add(kvp.Value);
+        }
+
         SaveSystem.Save(save);
     }
 
@@ -82,6 +92,16 @@ public class PlayerManager : MonoBehaviour
             save.technologies.Add(tech.ToSaveData());
 
         MapSaveManager.Instance.SaveMap(save, grid, marker);
+
+        // Resources
+        save.resourceNames = new List<string>();
+        save.resourceAmounts = new List<int>();
+
+        foreach (var kvp in ResourceInventory.Instance.resources)
+        {
+            save.resourceNames.Add(kvp.Key.name);
+            save.resourceAmounts.Add(kvp.Value);
+        }
 
         SaveSystem.Save(save);
     }
@@ -99,6 +119,16 @@ public class PlayerManager : MonoBehaviour
         save.technologies.Clear();
         foreach (var tech in techManager.GetAllTechnologies())
             save.technologies.Add(tech.ToSaveData());
+
+        // Resources
+        save.resourceNames = new List<string>();
+        save.resourceAmounts = new List<int>();
+
+        foreach (var kvp in ResourceInventory.Instance.resources)
+        {
+            save.resourceNames.Add(kvp.Key.name);
+            save.resourceAmounts.Add(kvp.Value);
+        }
 
         SaveSystem.Save(save);
     }
@@ -134,6 +164,15 @@ public class PlayerManager : MonoBehaviour
 
         if (mapSaveManager != null)
             mapSaveManager.LoadMap(save);
+
+        // Resources
+        ResourceInventory.Instance.resources.Clear();
+
+        for (int i = 0; i < save.resourceNames.Count; i++)
+        {
+            ResourceData data = Resources.Load<ResourceData>("Resources/" + save.resourceNames[i]);
+            ResourceInventory.Instance.resources[data] = save.resourceAmounts[i];
+        }
 
         Debug.Log("Game loaded successfully");
     }
