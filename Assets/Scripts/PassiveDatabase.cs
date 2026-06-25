@@ -33,15 +33,6 @@ public class PassiveDatabase : ScriptableObject
 
         foreach (var passive in passives)
         {
-            Debug.Log("Passive Database starting");
-            if (weakPassives.Count == 0)
-            Debug.LogWarning("AbilityDatabase: No WEAK abilities found!");
-
-            if (moderatePassives.Count == 0)
-            Debug.LogWarning("AbilityDatabase: No MODERATE abilities found!");
-
-            if (strongPassives.Count == 0)
-            Debug.LogWarning("AbilityDatabase: No STRONG abilities found!");
             switch (passive.tier)
             {
                 case TechTier.Weak:

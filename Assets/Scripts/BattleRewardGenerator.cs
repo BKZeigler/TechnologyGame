@@ -17,6 +17,7 @@ public class BattleRewardGenerator : MonoBehaviour
 
             int amount = res.rarity switch
             {
+                ResourceRarity.Scrap => Random.Range(10, 16),
                 ResourceRarity.Common => Random.Range(3, 7),
                 ResourceRarity.Rare => Random.Range(1, 3),
                 ResourceRarity.Legendary => 1,

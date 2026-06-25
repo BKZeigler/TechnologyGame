@@ -105,8 +105,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCombat
   stats:
-    health: 500
-    maxHealth: 500
+    health: 10
+    maxHealth: 10
     atkdamage: 1
     abilitydamage: 0
     abilityCount: 0

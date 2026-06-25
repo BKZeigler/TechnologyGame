@@ -14,6 +14,8 @@ public class BattleSceneManager : MonoBehaviour
     {
         context = FindAnyObjectByType<BattleContext>(); // safe replacement for deprecated API
 
+        context.OnEnemyListChanged += CheckBattleEnd;
+
         var robotInstances = PlayerManager.Instance.GetRobots();
         var enemyPrefabs = EnemyManager.Instance.GetEnemies(); // use your existing manager
 
@@ -99,5 +101,22 @@ public class BattleSceneManager : MonoBehaviour
         GameObject popup = Instantiate(popupPrefab);
 
         popup.GetComponent<RewardPopup>().Show(rewards);
-    }    
+    }
+
+    private void CheckBattleEnd()
+    {
+        // Clean nulls just in case
+        context.enemies.RemoveAll(e => e == null);
+
+        if (context.enemies.Count == 0)
+        {
+            EndBattle();
+        }
+    } 
+
+    private void OnDestroy()
+    {
+        if (context != null)
+            context.OnEnemyListChanged -= CheckBattleEnd;
+    }
 }

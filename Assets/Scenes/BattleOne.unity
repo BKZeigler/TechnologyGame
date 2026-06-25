@@ -348,6 +348,65 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1296319547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1296319549}
+  - component: {fileID: 1296319548}
+  m_Layer: 0
+  m_Name: BattleRewardGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1296319548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296319547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8dabb85ea283de4ab0a7225b6ff1a93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleRewardGenerator
+  possibleRewards:
+  - {fileID: 11400000, guid: 1bde8ca0df3e6a040b86362ca8c98349, type: 2}
+  - {fileID: 11400000, guid: ca08b1aa5837ba34c80789dc9dc22086, type: 2}
+  - {fileID: 11400000, guid: b2de8b43c3914f244a7535ec4a551eeb, type: 2}
+  - {fileID: 11400000, guid: d218c9ed17bce9741b5f428f27730365, type: 2}
+  - {fileID: 11400000, guid: 179052cf1c7b2be44975d1f39db1f5b9, type: 2}
+  - {fileID: 11400000, guid: 30b14ef54ef79db4fb4116a46779fecc, type: 2}
+  - {fileID: 11400000, guid: 36339c3e9c5864e46ba62c59d9af8fc0, type: 2}
+  - {fileID: 11400000, guid: 9ae6146d9c1d8e24abe55f182a76e52f, type: 2}
+  - {fileID: 11400000, guid: b750b5fc7a16cb8438601c13bfe2639d, type: 2}
+  - {fileID: 11400000, guid: ee25712cb82eb2948a815395dec7a55e, type: 2}
+  - {fileID: 11400000, guid: d3b429cf1ad64bf45a79a888351286da, type: 2}
+  - {fileID: 11400000, guid: 7a1dad12b2bf96b4baea656e2d23b269, type: 2}
+  - {fileID: 11400000, guid: 2eb089bd02e57f044b43878b69032603, type: 2}
+  - {fileID: 11400000, guid: 7a8f8a86a7465804ea71e48dd8c5fa72, type: 2}
+--- !u!4 &1296319549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296319547}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 443.54147, y: 209.05894, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1356384192
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,3 +509,4 @@ SceneRoots:
   - {fileID: 937310567}
   - {fileID: 1807910326}
   - {fileID: 1046821531}
+  - {fileID: 1296319549}

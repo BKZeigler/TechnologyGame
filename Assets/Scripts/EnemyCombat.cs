@@ -57,10 +57,14 @@ public class EnemyCombat : UnitThinker, IBuffTarget
     public void TakeDamage(double amount)
     {
         stats.health -= amount;
-        UpdateHPBar();
+        //UpdateHPBar();
 
         if (stats.health <= 0)
+        {
             Die();
+            return;
+        }
+        UpdateHPBar();
     }
 
     public double GetCurrentHealth() => stats.health;
@@ -74,6 +78,7 @@ public class EnemyCombat : UnitThinker, IBuffTarget
     public void Die()
     {
         Debug.Log("Enemy died");
+        context.NotifyEnemyDied(this);
         Destroy(gameObject);
     }
 

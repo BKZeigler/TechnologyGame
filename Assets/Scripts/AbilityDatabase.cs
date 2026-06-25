@@ -31,15 +31,6 @@ public class AbilityDatabase : ScriptableObject
 
         foreach (var ability in abilities)
         {
-            Debug.Log("Ability Database starting");
-            if (weakAbilities.Count == 0)
-            Debug.LogWarning("AbilityDatabase: No WEAK abilities found!");
-
-            if (moderateAbilities.Count == 0)
-            Debug.LogWarning("AbilityDatabase: No MODERATE abilities found!");
-
-            if (strongAbilities.Count == 0)
-            Debug.LogWarning("AbilityDatabase: No STRONG abilities found!");
             switch (ability.tier)
             {
                 case TechTier.Weak:

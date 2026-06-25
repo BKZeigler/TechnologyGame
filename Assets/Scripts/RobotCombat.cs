@@ -37,6 +37,8 @@ public class RobotCombat : UnitThinker
 
     protected override void Think()
     {
+        Context.enemies.RemoveAll(e => e == null); // removes destroyed enemies
+
         if (Context.enemies.Count == 0)
             return;
 
