@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class BattleRewardGenerator : MonoBehaviour
 {
-    public List<ResourceData> possibleRewards;
+    public List<ResourceData> possibleRewards => ResourceDatabase.Instance.allResources;
 
     public List<(ResourceData, int)> GenerateRewards()
     {
@@ -11,13 +11,19 @@ public class BattleRewardGenerator : MonoBehaviour
 
         int rolls = Random.Range(2, 4); // 2–3 rewards
 
+        ResourceData scrap = possibleRewards.Find(r => r.rarity == ResourceRarity.Scrap); // always give scrap
+        if (scrap != null)
+        {
+            int scrapAmount = Random.Range(10, 16);
+            rewards.Add((scrap, scrapAmount));
+        }
+
         for (int i = 0; i < rolls; i++)
         {
             ResourceData res = possibleRewards[Random.Range(0, possibleRewards.Count)];
 
             int amount = res.rarity switch
             {
-                ResourceRarity.Scrap => Random.Range(10, 16),
                 ResourceRarity.Common => Random.Range(3, 7),
                 ResourceRarity.Rare => Random.Range(1, 3),
                 ResourceRarity.Legendary => 1,

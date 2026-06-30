@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/BattleOne.unity
     guid: c6cb84503a2589b439b3d8337a551f78
+  - enabled: 1
+    path: Assets/Scenes/Workshop.unity
+    guid: ed0d7f062faa428408f717efd5933854
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

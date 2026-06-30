@@ -13,6 +13,6 @@ public class GameSaveData
     public List<TileEventSaveData> mapEvents = new List<TileEventSaveData>();
 
     // Resource-related
-    public List<string> resourceNames;
-    public List<int> resourceAmounts;
+    public List<string> resourceNames = new List<string>();
+    public List<int> resourceAmounts = new List<int>();
 }

@@ -841,7 +841,7 @@ MonoBehaviour:
   inventoryContainer: {fileID: 1735050045}
   scrapInputContainer: {fileID: 235706215}
   modifierInputContainer: {fileID: 1796492201}
-  resourceEntryPrefab: {fileID: 0}
+  resourceEntryPrefab: {fileID: 1839452104753659729, guid: 39ecde0da94d99b44a7582fd27e1890d, type: 3}
   createButton: {fileID: 376289959}
 --- !u!114 &1116368846
 MonoBehaviour:

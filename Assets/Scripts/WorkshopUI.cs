@@ -18,6 +18,7 @@ public class WorkshopUI : MonoBehaviour
 
     public void Initialize(IEnumerable<ResourceData> resources)
     {
+        Debug.Log("WorkshopUI Intialize");
         Refresh(resources, new List<ResourceData>(), new List<ResourceData>());
         createButton.onClick.AddListener(() => OnCreatePressed?.Invoke());
     }
@@ -29,7 +30,10 @@ public class WorkshopUI : MonoBehaviour
         ClearContainer(modifierInputContainer);
 
         foreach (var res in inventory)
+        {
+            Debug.Log("Key: " + (res == null ? "NULL" : res.resourceName));
             CreateEntry(res, inventoryContainer, () => OnResourceClicked?.Invoke(res));
+        }
 
         foreach (var res in scrapInput)
             CreateEntry(res, scrapInputContainer, () => OnInputClicked?.Invoke(res));
@@ -41,8 +45,24 @@ public class WorkshopUI : MonoBehaviour
     private void CreateEntry(ResourceData res, Transform parent, Action onClick)
     {
         GameObject entry = Instantiate(resourceEntryPrefab, parent);
-        entry.GetComponentInChildren<TextMeshProUGUI>().text = res.resourceName;
-        entry.GetComponent<Button>().onClick.AddListener(() => onClick());
+
+        var tmp = entry.GetComponentInChildren<TextMeshProUGUI>();
+        if (tmp == null)
+        {
+            Debug.LogError("Entry prefab is missing TextMeshProUGUI!");
+            return;
+        }
+
+        tmp.text = res.resourceName;
+
+        var button = entry.GetComponent<Button>();
+        if (button == null)
+        {
+            Debug.LogError("Entry prefab is missing Button component!");
+            return;
+        }
+
+        button.onClick.AddListener(() => onClick());
     }
 
     private void ClearContainer(Transform container)

@@ -12,7 +12,13 @@ public class WorkshopManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("WorkshopManager Start");
         ui.Initialize(ResourceInventory.Instance.resources.Keys);
+        foreach (var kvp in ResourceInventory.Instance.resources)
+        {
+            Debug.Log("Key: " + (kvp.Key == null ? "NULL" : kvp.Key.resourceName));
+        }
+        Debug.Log("Workshop inventory count: " + ResourceInventory.Instance.resources.Count);
         ui.OnResourceClicked += HandleResourceClicked;
         ui.OnInputClicked += HandleInputClicked;
         ui.OnCreatePressed += HandleCreatePressed;
@@ -42,6 +48,7 @@ public class WorkshopManager : MonoBehaviour
     private void HandleCreatePressed()
     {
         //techCreator.GenerateTechnology(scrapInput, modifierInput);
+        techCreator.CreateTechnology(scrapInput.Count); // will eventually use modifiers, right now scrap is value
         SceneManager.LoadScene("TechRewardScene");
     }
 }

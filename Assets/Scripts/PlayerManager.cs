@@ -74,7 +74,7 @@ public class PlayerManager : MonoBehaviour
 
         foreach (var kvp in ResourceInventory.Instance.resources)
         {
-            save.resourceNames.Add(kvp.Key.name);
+            save.resourceNames.Add(kvp.Key.resourceName);
             save.resourceAmounts.Add(kvp.Value);
         }
 
@@ -99,9 +99,16 @@ public class PlayerManager : MonoBehaviour
 
         foreach (var kvp in ResourceInventory.Instance.resources)
         {
-            save.resourceNames.Add(kvp.Key.name);
+            if (kvp.Key == null)
+            {
+                Debug.LogError("ResourceInventory contains NULL key — this should never happen.");
+                continue;
+            }
+
+            save.resourceNames.Add(kvp.Key.resourceName);
             save.resourceAmounts.Add(kvp.Value);
         }
+        Debug.Log("Saving resources: " + ResourceInventory.Instance.resources.Count);
 
         SaveSystem.Save(save);
     }
@@ -126,7 +133,7 @@ public class PlayerManager : MonoBehaviour
 
         foreach (var kvp in ResourceInventory.Instance.resources)
         {
-            save.resourceNames.Add(kvp.Key.name);
+            save.resourceNames.Add(kvp.Key.resourceName);
             save.resourceAmounts.Add(kvp.Value);
         }
 
@@ -166,13 +173,14 @@ public class PlayerManager : MonoBehaviour
             mapSaveManager.LoadMap(save);
 
         // Resources
-        ResourceInventory.Instance.resources.Clear();
+        //ResourceInventory.Instance.resources.Clear();
 
-        for (int i = 0; i < save.resourceNames.Count; i++)
-        {
-            ResourceData data = Resources.Load<ResourceData>("Resources/" + save.resourceNames[i]);
-            ResourceInventory.Instance.resources[data] = save.resourceAmounts[i];
-        }
+        //for (int i = 0; i < save.resourceNames.Count; i++)
+        //{
+        //    ResourceData data = ResourceDatabase.Instance.GetByName(save.resourceNames[i]);
+        //    if (data != null)
+        //        ResourceInventory.Instance.resources[data] = save.resourceAmounts[i];
+        //}
 
         Debug.Log("Game loaded successfully");
     }

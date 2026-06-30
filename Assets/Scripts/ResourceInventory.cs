@@ -5,14 +5,11 @@ public class ResourceInventory : MonoBehaviour
 {
     public static ResourceInventory Instance;
 
-    // Persistent counts
     public Dictionary<ResourceData, int> resources = new Dictionary<ResourceData, int>();
-    public List<ResourceData> debugResources = new List<ResourceData>();
-    public List<int> debugResourceAmounts = new List<int>();
 
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
@@ -20,6 +17,8 @@ public class ResourceInventory : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        LoadFromSave();   // <-- THIS MUST BE HERE
     }
 
     public void Add(ResourceData resource, int amount)
@@ -29,19 +28,33 @@ public class ResourceInventory : MonoBehaviour
 
         resources[resource] += amount;
 
-        // Update debug lists
-        if (!debugResources.Contains(resource))
-        {
-            debugResources.Add(resource);
-            debugResourceAmounts.Add(0);
-        }
-
-        int index = debugResources.IndexOf(resource);
-        debugResourceAmounts[index] += amount;
+        Debug.Log($"Added {amount} of {resource.resourceName}. New total: {resources[resource]}");
     }
 
     public int GetAmount(ResourceData resource)
     {
         return resources.TryGetValue(resource, out int value) ? value : 0;
+    }
+
+    private void LoadFromSave()
+    {
+        GameSaveData save = SaveSystem.Load();
+        if (save == null)
+            return;
+
+        resources.Clear();
+
+        for (int i = 0; i < save.resourceNames.Count; i++)
+        {
+            ResourceData data = ResourceDatabase.Instance.GetByName(save.resourceNames[i]);
+
+            if (data == null)
+            {
+                Debug.LogWarning($"Save file contains unknown resource: {save.resourceNames[i]}");
+                continue;
+            }
+
+            resources[data] = save.resourceAmounts[i];
+        }
     }
 }
