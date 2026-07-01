@@ -10,7 +10,7 @@ public class TechController : MonoBehaviour // old script, used for early testin
 
     public void OnCreateTechButton()
     {
-        lastCreatedTech = techCreator.CreateTechnology(100);
+        //lastCreatedTech = techCreator.CreateTechnology(100);
         //techManager.AddTech(lastCreatedTech);
         Debug.Log("Created technology!");
     }

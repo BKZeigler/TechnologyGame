@@ -54,38 +54,19 @@ public class TechnologyRewardUI : MonoBehaviour
 
     void GenerateTech()
     {
-        // Create a tech with value 100
-        var creator = FindFirstObjectByType<TechnologyCreator>();
-        generatedTech = creator.CreateTechnology(100);
+        generatedTech = PlayerManager.Instance.pendingCraftedTech;
 
-        // Register tech so it gets an ID and is stored
+        if (generatedTech == null)
+        {
+            Debug.LogError("No crafted tech found! Workshop did not create a tech.");
+            return;
+        }
+
+        // Register tech so it gets an ID
         generatedTech = techManager.RegisterTech(generatedTech);
 
-        // Display name
-        techNameText.text = generatedTech.techName;
-
-        // Stats
-        statsText.text = "";
-        string[] statNames = { "Health", "Damage", "Ability Damage", "Attack Speed", "Cast Speed", "Ability Count", "Luck" };
-        for (int i = 0; i < generatedTech.stats.Length; i++)
-            statsText.text += $"{statNames[i]}: {generatedTech.stats[i]}\n";
-
-        // Abilities
-        abilitiesText.text = "Abilities:\n";
-        foreach (int id in generatedTech.abilityIDs)
-        {
-            var ability = AbilityDatabase.GetAbility(id);
-            abilitiesText.text += $"{ability.abilityName}\n";
-        }
-
-        // Passives
-        passivesText.text = "Passives:\n";
-        foreach (int id in generatedTech.passiveIDs)
-        {
-            var passive = PassiveDatabase.GetPassive(id);
-            passivesText.text += $"{passive.passiveName}\n";
-        }
-    }
+        DisplayTech(generatedTech);
+}
 
     void PopulateRobotButtons()
     {
@@ -141,6 +122,7 @@ public class TechnologyRewardUI : MonoBehaviour
         DisplayRobotInfo(selectedRobot); // update display to show new stats and tech list
 
         // 🔒 Prevent merging again
+        PlayerManager.Instance.pendingCraftedTech = null;
         generatedTech = null;
         mergeButton.interactable = false;
 
@@ -234,6 +216,24 @@ public class TechnologyRewardUI : MonoBehaviour
         robotStartIndex = (robotStartIndex + direction * step + robots.Count) % robots.Count;
 
         PopulateRobotButtons();
+    }
+
+    void DisplayTech(Technology tech)
+    {
+        techNameText.text = tech.techName;
+
+        statsText.text = "";
+        string[] statNames = { "Health", "Damage", "Ability Damage", "Attack Speed", "Cast Speed", "Ability Count", "Luck" };
+        for (int i = 0; i < tech.stats.Length; i++)
+            statsText.text += $"{statNames[i]}: {tech.stats[i]}\n";
+
+        abilitiesText.text = "Abilities:\n";
+        foreach (int id in tech.abilityIDs)
+            abilitiesText.text += $"{AbilityDatabase.GetAbility(id).abilityName}\n";
+
+        passivesText.text = "Passives:\n";
+        foreach (int id in tech.passiveIDs)
+            passivesText.text += $"{PassiveDatabase.GetPassive(id).passiveName}\n";
     }
 
 }

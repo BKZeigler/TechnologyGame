@@ -7,6 +7,7 @@ public class TechnologyCreator : MonoBehaviour
     private double initialValue = 0;
     private double currentValue = 0;
     private double statValue = 0;
+
     private int weakACount = 0;
     private int weakPCount = 0;
     private int modACount = 0;
@@ -14,111 +15,206 @@ public class TechnologyCreator : MonoBehaviour
     private int strongACount = 0;
     private int strongPCount = 0;
 
-    public Technology CreateTechnology(double iValue)
+    // Redistribution flags
+    private bool redistributeHealth = false;
+    private bool redistributeLuck = false;
+    private bool redistributeAtkDmg = false;
+    private bool redistributeAtkSpd = false;
+    private bool redistributeAbilityDmg = false;
+    private bool redistributeAbilityCount = false;
+
+    private bool forceLeftoverIntoStats = false;
+    private double minGreasePercent = 0;
+
+    public Technology CreateTechnology(double scrapValue, Dictionary<ResourceData, int> modifiers)
     {
-        statValue = 0;
+        ResetInternalState();
 
-        initialValue = iValue;
-        currentValue = iValue;
+        // 1 Scrap = 10 value
+        initialValue = scrapValue * 10;
+        currentValue = initialValue;
 
-        double statPercent = RandomBasicPercent();
+        ApplyModifiers(modifiers);
+
+        double statPercent = RandomBasicPercent(minGreasePercent);
         statValue = currentValue * statPercent;
         currentValue -= statValue;
 
-        if (currentValue > 10)
-        {
-            int maxCount = (int)Math.Floor(currentValue / 10.0);
-            weakACount = UnityEngine.Random.Range(0, maxCount);
-            currentValue -= weakACount * 10;
-        }
-        if (currentValue > 10)
-        {
-            int maxCount = (int)Math.Floor(currentValue / 10.0);
-            weakPCount = UnityEngine.Random.Range(0, maxCount);
-            currentValue -= weakPCount * 10;
-        }
-        if (currentValue > 20)
-        {
-            int maxCount = (int)Math.Floor(currentValue / 20.0);
-            modACount = UnityEngine.Random.Range(0, maxCount);
-            currentValue -= modACount * 20;
-        }
-        if (currentValue > 20)
-        {
-            int maxCount = (int)Math.Floor(currentValue / 20.0);
-            modPCount = UnityEngine.Random.Range(0, maxCount);
-            currentValue -= modPCount * 20;
-        }
-        if (currentValue > 30)
-        {
-            int maxCount = (int)Math.Floor(currentValue / 30.0);
-            strongACount = UnityEngine.Random.Range(0, maxCount);
-            currentValue -= strongACount * 30;
-        }
-        if (currentValue > 30)
-        {
-            int maxCount = (int)Math.Floor(currentValue / 30.0);
-            strongPCount = UnityEngine.Random.Range(0, maxCount);
-            currentValue -= strongPCount * 30;
-        }
+        AllocateAbilityAndPassiveCounts();
 
-        //statValue += currentValue; maybe make the system less lenient by not giving the leftover value as stat boosts? (possible upgrade)
+        if (forceLeftoverIntoStats)
+            statValue += currentValue;
 
-        // Create the Technology object
         var tech = ScriptableObject.CreateInstance<Technology>();
-
-        // Assign a unique name from the run pool
         tech.techName = RunManager.Instance.GetRandomUnusedName();
 
-        // Assign stats and IDs
         tech.stats = CalcStatsArray();
+        ApplyStatRedistribution(tech.stats);
+        ClampStats(tech.stats, initialValue);
+
         tech.abilityIDs = CreateAbilityIdList(weakACount, modACount, strongACount);
-        Debug.Log($"Created Technology {tech.techName} with ability IDs: {string.Join(",", tech.abilityIDs)}");
         tech.passiveIDs = CreatePassiveIdList(weakPCount, modPCount, strongPCount);
 
         return tech;
     }
 
+    private void ApplyModifiers(Dictionary<ResourceData, int> modifiers)
+    {
+        foreach (var kvp in modifiers)
+        {
+            ResourceData res = kvp.Key;
+            int amount = kvp.Value;
+
+            switch (res.resourceName)
+            {
+                case "Iron": weakACount += amount; break;
+                case "Copper": weakPCount += amount; break;
+
+                case "Steel": modACount += amount; break;
+                case "Bronze": modPCount += amount; break;
+
+                case "Damascus Steel": strongACount += amount; break;
+                case "Corinthian Bronze": strongPCount += amount; break;
+
+                case "Tungsten": forceLeftoverIntoStats = true; break;
+
+                case "Grease":
+                    minGreasePercent += amount * 0.05;
+                    minGreasePercent = Math.Min(minGreasePercent, 0.95);
+                    break;
+
+                case "Glass":   redistributeHealth = true; break;
+                case "Pyrite":  redistributeLuck = true; break;
+                case "Gold":    redistributeAtkDmg = true; break;
+                case "Lead":    redistributeAtkSpd = true; break;
+                case "Coal":    redistributeAbilityDmg = true; break;
+                case "Quartz":  redistributeAbilityCount = true; break;
+            }
+        }
+    }
+
+    private void AllocateAbilityAndPassiveCounts()
+    {
+        TryAllocate(ref weakACount, 10);
+        TryAllocate(ref weakPCount, 10);
+        TryAllocate(ref modACount, 20);
+        TryAllocate(ref modPCount, 20);
+        TryAllocate(ref strongACount, 30);
+        TryAllocate(ref strongPCount, 30);
+    }
+
+    private void TryAllocate(ref int count, int cost)
+    {
+        if (currentValue > cost)
+        {
+            int maxCount = (int)Math.Floor(currentValue / cost);
+            int add = UnityEngine.Random.Range(0, maxCount);
+            count += add;
+            currentValue -= add * cost;
+        }
+    }
+
     double[] CalcStatsArray()
     {
         double[] statsArr = new double[7];
-        double tempPercent;
+        double remaining = statValue;
 
-        tempPercent = RandomBasicPercent();
-        statsArr[0] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
-
-        tempPercent = RandomBasicPercent();
-        statsArr[1] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
-
-        tempPercent = RandomBasicPercent();
-        statsArr[2] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
-
-        tempPercent = RandomBasicPercent();
-        statsArr[3] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
-
-        tempPercent = RandomBasicPercent();
-        statsArr[4] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
-
-        tempPercent = RandomBasicPercent();
-        statsArr[5] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
-
-        tempPercent = RandomBasicPercent();
-        statsArr[6] = Math.Round(statValue * tempPercent, 1);
-        statValue -= statValue * tempPercent;
+        for (int i = 0; i < 7; i++)
+        {
+            double percent = RandomBasicPercent();
+            double val = remaining * percent;
+            statsArr[i] = Math.Round(val, 1);
+            remaining -= val;
+        }
 
         return statsArr;
+    }
+
+    private void ApplyStatRedistribution(double[] stats)
+    {
+        // MergeTech multipliers (robot-power per stat point)
+        double[] mult = new double[]
+        {
+            1.0,   // Health
+            0.05,  // Damage
+            0.05,  // AbilityDamage
+            0.01,  // AttackSpeed
+            0.01,  // CastSpeed
+            0.02,  // AbilityCount
+            0.1    // Luck
+        };
+
+        bool[] flags = new bool[]
+        {
+            redistributeHealth,
+            redistributeAtkDmg,
+            redistributeAbilityDmg,
+            redistributeAtkSpd,
+            false, // CastSpeed unaffected
+            redistributeAbilityCount,
+            redistributeLuck
+        };
+
+        // 1. Convert raw stats → robot-power
+        double[] power = new double[7];
+        for (int i = 0; i < 7; i++)
+            power[i] = stats[i] * mult[i];
+
+        // 2. Sum flagged robot-power
+        double pool = 0;
+        for (int i = 0; i < 7; i++)
+            if (flags[i])
+                pool += power[i];
+
+        // 3. Zero flagged stats
+        for (int i = 0; i < 7; i++)
+            if (flags[i])
+                stats[i] = 0;
+
+        if (pool <= 0)
+            return;
+
+        // 4. Sum multipliers of unflagged stats
+        double totalMult = 0;
+        for (int i = 0; i < 7; i++)
+            if (!flags[i])
+                totalMult += mult[i];
+
+        // 5. Redistribute robot-power proportionally
+        for (int i = 0; i < 7; i++)
+        {
+            if (!flags[i])
+            {
+                double addPower = pool * (mult[i] / totalMult);
+                stats[i] += Math.Round(addPower / mult[i], 1); // convert back to raw stat
+            }
+        }
+
+        // 6. Clamp raw stats to avoid absurd values
+        double maxStat = initialValue; // scrapValue * 10
+        for (int i = 0; i < 7; i++)
+        {
+            if (stats[i] > maxStat)
+                stats[i] = Math.Round(maxStat, 1);
+            if (stats[i] < 0)
+                stats[i] = 0;
+        }
+    }
+    private void ClampStats(double[] stats, double totalValue)
+    {
+        // Simple safety clamp: no stat should exceed totalValue
+        for (int i = 0; i < stats.Length; i++)
+        {
+            if (stats[i] > totalValue)
+                stats[i] = Math.Round(totalValue, 1);
+            if (stats[i] < 0)
+                stats[i] = 0;
+        }
     }
 
     List<int> CreateAbilityIdList(int weakCount, int modCount, int strongCount)
     {
         var ids = new List<int>();
-
         var adb = AbilityDatabase.Instance;
 
         for (int i = 0; i < weakCount; i++)
@@ -144,7 +240,6 @@ public class TechnologyCreator : MonoBehaviour
     List<int> CreatePassiveIdList(int weakCount, int modCount, int strongCount)
     {
         var ids = new List<int>();
-
         var pdb = PassiveDatabase.Instance;
 
         for (int i = 0; i < weakCount; i++)
@@ -167,8 +262,22 @@ public class TechnologyCreator : MonoBehaviour
         return list[UnityEngine.Random.Range(0, list.Count)];
     }
 
-    double RandomBasicPercent()
+    double RandomBasicPercent(double min = 0)
     {
-        return UnityEngine.Random.Range(0f, 100f) / 100f;
+        double p = UnityEngine.Random.Range(0f, 100f) / 100f;
+        return Math.Max(p, min);
+    }
+
+    private void ResetInternalState()
+    {
+        initialValue = currentValue = statValue = 0;
+
+        weakACount = weakPCount = modACount = modPCount = strongACount = strongPCount = 0;
+
+        redistributeHealth = redistributeLuck = redistributeAtkDmg = redistributeAtkSpd =
+        redistributeAbilityDmg = redistributeAbilityCount = false;
+
+        forceLeftoverIntoStats = false;
+        minGreasePercent = 0;
     }
 }

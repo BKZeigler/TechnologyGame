@@ -16,33 +16,57 @@ public class WorkshopUI : MonoBehaviour
     public event Action<ResourceData> OnInputClicked;
     public event Action OnCreatePressed;
 
-    public void Initialize(IEnumerable<ResourceData> resources)
+    public void Initialize(
+        Dictionary<ResourceData, int> inventory,
+        Dictionary<ResourceData, int> scrapInput,
+        Dictionary<ResourceData, int> modifierInput)
     {
-        Debug.Log("WorkshopUI Intialize");
-        Refresh(resources, new List<ResourceData>(), new List<ResourceData>());
+        Debug.Log("WorkshopUI Initialize");
+        Refresh(inventory, scrapInput, modifierInput);
         createButton.onClick.AddListener(() => OnCreatePressed?.Invoke());
     }
 
-    public void Refresh(IEnumerable<ResourceData> inventory, List<ResourceData> scrapInput, List<ResourceData> modifierInput)
+    public void Refresh(
+        Dictionary<ResourceData, int> inventory,
+        Dictionary<ResourceData, int> scrapInput,
+        Dictionary<ResourceData, int> modifierInput)
     {
         ClearContainer(inventoryContainer);
         ClearContainer(scrapInputContainer);
         ClearContainer(modifierInputContainer);
 
-        foreach (var res in inventory)
+        // Inventory entries
+        foreach (var kvp in inventory)
         {
-            Debug.Log("Key: " + (res == null ? "NULL" : res.resourceName));
-            CreateEntry(res, inventoryContainer, () => OnResourceClicked?.Invoke(res));
+            var res = kvp.Key;
+            var amount = kvp.Value;
+            if (res == null) continue;
+
+            CreateEntry(res, amount, inventoryContainer, () => OnResourceClicked?.Invoke(res));
         }
 
-        foreach (var res in scrapInput)
-            CreateEntry(res, scrapInputContainer, () => OnInputClicked?.Invoke(res));
+        // Scrap input entries
+        foreach (var kvp in scrapInput)
+        {
+            var res = kvp.Key;
+            var amount = kvp.Value;
+            if (res == null || amount <= 0) continue;
 
-        foreach (var res in modifierInput)
-            CreateEntry(res, modifierInputContainer, () => OnInputClicked?.Invoke(res));
+            CreateEntry(res, amount, scrapInputContainer, () => OnInputClicked?.Invoke(res));
+        }
+
+        // Modifier input entries
+        foreach (var kvp in modifierInput)
+        {
+            var res = kvp.Key;
+            var amount = kvp.Value;
+            if (res == null || amount <= 0) continue;
+
+            CreateEntry(res, amount, modifierInputContainer, () => OnInputClicked?.Invoke(res));
+        }
     }
 
-    private void CreateEntry(ResourceData res, Transform parent, Action onClick)
+    private void CreateEntry(ResourceData res, int amount, Transform parent, Action onClick)
     {
         GameObject entry = Instantiate(resourceEntryPrefab, parent);
 
@@ -53,9 +77,9 @@ public class WorkshopUI : MonoBehaviour
             return;
         }
 
-        tmp.text = res.resourceName;
+        tmp.text = $"{res.resourceName} x{amount}";
 
-        var button = entry.GetComponent<Button>();
+        var button = entry.GetComponentInChildren<Button>();
         if (button == null)
         {
             Debug.LogError("Entry prefab is missing Button component!");

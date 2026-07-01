@@ -10,6 +10,7 @@ public class PlayerManager : MonoBehaviour
 
     private TechnologyManager techManager;
     private MapSaveManager mapSaveManager;
+    public Technology pendingCraftedTech;
 
     // -------------------------
     // Global battle buffs
